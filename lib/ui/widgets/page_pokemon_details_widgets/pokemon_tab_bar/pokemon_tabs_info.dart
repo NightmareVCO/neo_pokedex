@@ -4,9 +4,19 @@ import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_
 import 'package:neo_pokedex/utils/text_utils.dart';
 
 class PokemonTabsInfo extends StatelessWidget {
-  final String type;
+  const PokemonTabsInfo(
+      {super.key,
+      required this.type,
+      required this.about,
+      required this.captureRate,
+      required this.height,
+      required this.weight});
 
-  const PokemonTabsInfo({super.key, required this.type});
+  final String type;
+  final String about;
+  final String captureRate;
+  final String height;
+  final String weight;
 
   @override
   Widget build(BuildContext context) {
@@ -24,12 +34,11 @@ class PokemonTabsInfo extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: PokemonAboutTab(
-                      about: removeNewLines(
-                          "Spits fire that\nis hot enough to\nmelt boulders.\fKnown to cause\nforest fires\nunintentionally."),
+                      about: removeNewLines(about),
                       type: type,
-                      captureRate: "45%",
-                      height: "1.7",
-                      weight: "90.5",
+                      captureRate: captureRate,
+                      height: height,
+                      weight: weight,
                     ),
                   ),
                   const SingleChildScrollView(

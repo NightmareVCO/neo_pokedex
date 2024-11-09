@@ -23,6 +23,13 @@ class Pokemon extends StatelessWidget {
   final String imageUrl;
   final String cryUrl;
 
+  //TODO: Para visuales como PokemonTabsInfo que recibe informacion que no tenemos en la clase Pokemon, debemos buscar una solución, puede ser una clase o algun mapa.s
+  final String about =
+      "Spits fire that\nis hot enough to\nmelt boulders.\fKnown to cause\nforest fires\nunintentionally.";
+  final String captureRate = "45%";
+  final String height = "1.7";
+  final String weight = "90.5";
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -32,7 +39,14 @@ class Pokemon extends StatelessWidget {
         PokemonTypes(types: types),
         PokemonImage(cryUrl: cryUrl, imageUrl: imageUrl),
         const SizedBox(height: 10),
-        SizedBox(height: 1000, child: PokemonTabsInfo(type: types.first)),
+        SizedBox(
+            height: 1000,
+            child: PokemonTabsInfo(
+                type: types.first,
+                about: about,
+                captureRate: captureRate,
+                height: height,
+                weight: weight)),
       ],
     );
   }
