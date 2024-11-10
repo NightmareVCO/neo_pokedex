@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/ui/shared/widgets/circle_background.dart';
 import 'package:neo_pokedex/ui/shared/widgets/pokeball_barkground.dart';
+import 'package:neo_pokedex/ui/themes/pokeball_background_colors.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_app_bar.dart';
 
@@ -15,6 +16,8 @@ import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_app_
 */
 
 class PokemonPage extends StatefulWidget {
+  static const String routeName = '/pokemon_page';
+
   const PokemonPage({super.key});
 
   @override
@@ -54,7 +57,7 @@ class _PokemonPageState extends State<PokemonPage> {
 
   // Esto es lo que hay de momento:
   final String name = "Charizard";
-  final String number = "#006";
+  final String number = "006";
   final String habitat = "forest";
   final List<String> types = ["fire", "flying"];
   final String imageUrl =
@@ -109,7 +112,11 @@ class _PokemonPageState extends State<PokemonPage> {
             children: [
               CircleBackGround(types: types),
               // CircleBackGround(types: pokemon.types),
-              const PokeballBackground(),
+              const Positioned(
+                  top: 100,
+                  right: -100,
+                  child: PokeballBackground(
+                      color: PokeballBackgroundColors.white)),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
                 // child: Pokemon(pokemon: pokemon),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:neo_pokedex/ui/pages/page_pokemon_details.dart';
+import 'package:neo_pokedex/core/routes/routes.dart';
+import 'package:neo_pokedex/ui/pages/home_pokemon_list.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,9 +13,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Neo Pokedex',
-      home: PokemonPage(),
+      routes: routes,
+      initialRoute: PokemonListPage.routeName,
     );
   }
 }

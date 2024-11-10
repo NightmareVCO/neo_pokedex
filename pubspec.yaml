@@ -1,5 +1,5 @@
 name: neo_pokedex
-description: "A new Flutter project."
+description: "A Pokedex app made with Flutter using the PokeAPI in GraphQL."
 publish_to: 'none'
 version: 0.1.0
 
@@ -14,6 +14,7 @@ dependencies:
   flutter_svg: ^2.0.12
   http: 1.2.2
   shared_preferences: 2.3.3
+  auto_route: ^9.2.2
 
 dev_dependencies:
   flutter_test:

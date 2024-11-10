@@ -36,9 +36,14 @@ class _PokemonAppBarState extends State<PokemonAppBar> {
           elevation: 0,
           backgroundColor: color,
           surfaceTintColor: Colors.transparent,
-          leading: Icon(
-            Icons.arrow_back_ios,
-            color: widget.scrollOffset > 200 ? Colors.black : Colors.white,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: widget.scrollOffset > 200 ? Colors.black : Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
           title: Center(
             child: Row(

@@ -18,7 +18,7 @@ class PokemonNumber extends StatelessWidget {
               CrossAxisAlignment.center, // Alinea verticalmente al centro
           children: [
             Text(
-              number,
+              '# $number',
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
