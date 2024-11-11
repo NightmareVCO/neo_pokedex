@@ -26,6 +26,10 @@ class PokemonCard extends StatelessWidget {
     List<Color> colors =
         types.map((type) => pokemonTypeColorsBg[type] ?? Colors.grey).toList();
 
+    if (colors.length == 1) {
+      colors = [colors.first, colors.first];
+    }
+
     return GestureDetector(
       onTap: () => Navigator.pushNamed(context, '/pokemon_page'),
       child: Container(
