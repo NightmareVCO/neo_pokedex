@@ -62,7 +62,11 @@ class _PokemonImageState extends State<PokemonImage>
       String mp3Url = await getMp3(widget.cryUrl);
 
       if (mp3Url.isNotEmpty) {
-        await _audioPlayer.play(UrlSource(mp3Url, mimeType: 'audio/mp3'));
+        try {
+          await _audioPlayer.play(UrlSource(mp3Url, mimeType: 'audio/mp3'));
+        } catch (e) {
+          // Manejar el error aquí
+        }
       }
     } else {
       _audioPlayer.play(UrlSource(widget.cryUrl, mimeType: 'audio/ogg'));

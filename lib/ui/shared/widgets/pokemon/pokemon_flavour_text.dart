@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_about_tab_info_dto.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 
 class PokemonFlavourText extends StatelessWidget {
-  final String about;
-  final String type;
-  final String captureRate;
-  final String height;
-  final String weight;
+  const PokemonFlavourText({super.key, required this.pokemonFlavourTextDto});
 
-  const PokemonFlavourText(
-      {super.key,
-      required this.about,
-      required this.type,
-      required this.captureRate,
-      required this.height,
-      required this.weight});
+  final PokemonFlavourTextDto pokemonFlavourTextDto;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      shadowColor: pokemonTypeColors[type],
+      shadowColor: pokemonTypeColors[pokemonFlavourTextDto.type],
       elevation: 2,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -38,22 +29,23 @@ class PokemonFlavourText extends StatelessWidget {
                 decoration: BoxDecoration(
                   boxShadow: [
                     BoxShadow(
-                      color: pokemonTypeColors[type]!.withOpacity(0.5),
+                      color: pokemonTypeColors[pokemonFlavourTextDto.type]!
+                          .withOpacity(0.5),
                       blurRadius: 2,
                     ),
                   ],
-                  color: Colors.white, // Hollow center
+                  color: Colors.white,
                   border: Border.all(
-                    color: pokemonTypeColors[type]!, // Border color
-                    width: 2.0, // Border width
+                    color: pokemonTypeColors[pokemonFlavourTextDto.type]!,
+                    width: 2.0,
                   ),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Center(
                   child: Text(
-                    'Flavour Text',
+                    'Description',
                     style: TextStyle(
-                      color: pokemonTypeColors[type], // Text color
+                      color: pokemonTypeColors[pokemonFlavourTextDto.type],
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -63,10 +55,10 @@ class PokemonFlavourText extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              about,
+              pokemonFlavourTextDto.about,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 14,
               ),
             ),
             const SizedBox(height: 20),
@@ -78,13 +70,18 @@ class PokemonFlavourText extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.height),
-                    Text('$height m'),
+                    Text(
+                      '${pokemonFlavourTextDto.height} m',
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(
                   height: 50,
                   child: VerticalDivider(
-                    color: pokemonTypeColors[type],
+                    color: pokemonTypeColors[pokemonFlavourTextDto.type],
                     thickness: 1,
                   ),
                 ),
@@ -92,13 +89,13 @@ class PokemonFlavourText extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.monitor_weight_outlined),
-                    Text('$weight kg'),
+                    Text('${pokemonFlavourTextDto.weight} kg'),
                   ],
                 ),
                 SizedBox(
                   height: 50,
                   child: VerticalDivider(
-                    color: pokemonTypeColors[type],
+                    color: pokemonTypeColors[pokemonFlavourTextDto.type],
                     thickness: 1,
                   ),
                 ),
@@ -106,7 +103,7 @@ class PokemonFlavourText extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(Icons.star),
-                    Text(captureRate),
+                    Text(pokemonFlavourTextDto.captureRate),
                   ],
                 ),
               ],

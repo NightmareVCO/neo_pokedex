@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_about_tab_info_dto.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_moves_tab_info_dto.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_stats_tab_info_dto.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_bar/pokemon_tab_bar.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_bar/pokemon_tabs/pokemon_about_tab.dart';
-import 'package:neo_pokedex/utils/text_utils.dart';
+import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_bar/pokemon_tabs/pokemon_evolution_tab.dart';
+import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_bar/pokemon_tabs/pokemon_moves_tab.dart';
+import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_bar/pokemon_tabs/pokemon_stats_tab.dart';
 
 class PokemonTabsInfo extends StatelessWidget {
   const PokemonTabsInfo(
       {super.key,
-      required this.type,
-      required this.about,
-      required this.captureRate,
-      required this.height,
-      required this.weight});
+      required this.pokemonAboutTabInfoDto,
+      required this.pokemonStatsTabInfoDto,
+      required this.pokemonMovesTabInfoDto,
+      required this.pokemonEvolutionTabInfoDto});
 
-  final String type;
-  final String about;
-  final String captureRate;
-  final String height;
-  final String weight;
+  final PokemonAboutTabInfoDto pokemonAboutTabInfoDto;
+  final PokemonStatsTabInfoDto pokemonStatsTabInfoDto;
+  final PokemonMovesTabInfoDto pokemonMovesTabInfoDto;
+  final PokemonEvolutionTabInfoDto pokemonEvolutionTabInfoDto;
 
   @override
   Widget build(BuildContext context) {
@@ -24,78 +28,34 @@ class PokemonTabsInfo extends StatelessWidget {
       height: 1000,
       width: double.infinity,
       child: DefaultTabController(
-        length: 5,
+        length: 4,
         child: Column(
           children: [
-            PokemonTabBar(type: type),
+            PokemonTabBar(type: pokemonAboutTabInfoDto.type),
             Expanded(
               child: TabBarView(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: PokemonAboutTab(
-                      about: removeNewLines(about),
-                      type: type,
-                      captureRate: captureRate,
-                      height: height,
-                      weight: weight,
-                    ),
+                        pokemonAboutTabInfoDto: pokemonAboutTabInfoDto),
                   ),
-                  const SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Stats information here..."),
-                          // Añade más contenido para mostrar el scroll en la pestaña Stats
-                          Text("Información adicional..."),
-                          // Puedes añadir más información aquí
-                        ],
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: PokemonStatsTab(
+                        pokemonStatsTabInfoDto: pokemonStatsTabInfoDto,
+                        pokemonTypeEffectivenessTextDto: pokemonStatsTabInfoDto
+                            .pokemonTypeEffectivenessTextDto),
                   ),
-                  const SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Stats information here..."),
-                          // Añade más contenido para mostrar el scroll en la pestaña Stats
-                          Text("Información adicional..."),
-                          // Puedes añadir más información aquí
-                        ],
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: PokemonEvolutionTab(
+                        pokemonEvolutionTabInfoDto: pokemonEvolutionTabInfoDto),
                   ),
-                  const SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Stats information here..."),
-                          // Añade más contenido para mostrar el scroll en la pestaña Stats
-                          Text("Información adicional..."),
-                          // Puedes añadir más información aquí
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Stats information here..."),
-                          // Añade más contenido para mostrar el scroll en la pestaña Stats
-                          Text("Información adicional..."),
-                          // Puedes añadir más información aquí
-                        ],
-                      ),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: PokemonMovesTab(
+                        pokemonMovesTabInfoDto: pokemonMovesTabInfoDto),
                   ),
                 ],
               ),

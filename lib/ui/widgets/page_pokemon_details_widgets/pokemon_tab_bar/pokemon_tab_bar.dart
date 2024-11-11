@@ -28,7 +28,7 @@ class PokemonTabBar extends StatelessWidget {
           color: pokemonTypeColors[type],
         ),
         tabs: PokemonTabBarRender(
-          tabs: ["About", "Stats", "Evolution", "Moves", "Breeding"],
+          tabs: ["About", "Stats", "Evolution", "Moves"],
           type: type,
         ).renderTabs());
   }
