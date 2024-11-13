@@ -64,7 +64,7 @@ class GraphQLService {
           weight
           pokemon_v2_pokemonspecy {
             capture_rate
-            pokemon_v2_pokemonspeciesflavortexts(limit: 1) {
+            pokemon_v2_pokemonspeciesflavortexts(where: {pokemon_v2_language: {name: {_eq: "en"}}},limit: 1) {
               flavor_text
             }
           }
