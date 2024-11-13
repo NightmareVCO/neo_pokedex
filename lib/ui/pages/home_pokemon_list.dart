@@ -29,14 +29,14 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _graphQLService = GraphQLService(_client);
 
     // Realiza la consulta para obtener los datos del Pokémon con ID específico
-   // _pokemonFuture = _graphQLService.getPokemonById(1); // Cambia el ID según sea necesario
-    _pokemonFuture = _graphQLService.getPokemons(); 
+    // _pokemonFuture = _graphQLService.getPokemonById(1); // Cambia el ID según sea necesario
+    _pokemonFuture = _graphQLService.getPokemons("id", "asc", 10);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<models.Pokemon>>(
-    //return FutureBuilder<models.Pokemon>(
+      //return FutureBuilder<models.Pokemon>(
       future: _pokemonFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,7 +58,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
               const Positioned(
                 top: 40,
                 right: 10,
-                child: PokeballBackground(color: PokeballBackgroundColors.black),
+                child:
+                    PokeballBackground(color: PokeballBackgroundColors.black),
               ),
             ],
           );

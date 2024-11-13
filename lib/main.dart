@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:neo_pokedex/ui/pages/page_pokemon_details.dart';
-
+import 'package:neo_pokedex/core/routes/routes.dart';
+import 'package:neo_pokedex/ui/pages/home_pokemon_list.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +19,11 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
-      child: const MaterialApp(
+      child: MaterialApp(
         title: 'Neo Pokedex',
-        home: PokemonPage(),
+        routes: routes,
+        initialRoute: PokemonListPage.routeName,
       ),
-      
     );
   }
 }
@@ -42,4 +42,3 @@ ValueNotifier<GraphQLClient> initializeClient() {
 
   return client;
 }
-

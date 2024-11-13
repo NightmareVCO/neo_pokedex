@@ -1,3 +1,5 @@
+import 'package:neo_pokedex/core/models/pokemon_moves.dart';
+
 class PokemonMovesTabInfoDto {
   final String type;
   final List<PokemonMoveTextDto> moves;
@@ -44,6 +46,19 @@ class PokemonMoveTextDto {
       moveType: json['moveType'],
       moveDamageClass: json['moveDamageClass'],
       movePP: json['movePP'],
+    );
+  }
+
+  factory PokemonMoveTextDto.fromMove(PokemonMove move) {
+    return PokemonMoveTextDto(
+      level: move.level.toString(),
+      method: move.moveLearnMethod.name,
+      move: move.move.name,
+      movePower: move.move.power?.toString() ?? 'n/a',
+      moveAccuracy: move.move.accuracy?.toString() ?? 'n/a',
+      moveType: move.move.moveType.name,
+      moveDamageClass: move.move.moveDamageClass.name,
+      movePP: move.move.pp.toString(),
     );
   }
 }

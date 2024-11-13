@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list_card.dart';
 import 'package:neo_pokedex/core/models/pokemon.dart';
 
@@ -27,11 +26,7 @@ class PokemonList extends StatelessWidget {
             itemBuilder: (_, index) {
               final pokemon = pokemons[index];
               return PokemonCard(
-                name: pokemon.name,
-                number: pokemon.id.toString().padLeft(3, '0'),
-                types: pokemon.types,
-                imageUrl: pokemon.imageUrl,
-                color: pokemonTypeColorsBg[pokemon.types.first]!,
+                pokemon: pokemon,
               );
             },
           ),
