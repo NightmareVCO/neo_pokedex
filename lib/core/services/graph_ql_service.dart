@@ -1,5 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:neo_pokedex/core/models/pokemon.dart';
+import 'package:neo_pokedex/core/models/pokemon_about_description.dart';
 import 'package:neo_pokedex/core/models/pokemon_evolutions.dart';
 import 'package:neo_pokedex/core/models/pokemon_hero.dart';
 import 'package:neo_pokedex/core/models/pokemon_stats.dart';
@@ -55,6 +56,37 @@ class GraphQLService {
     final pokemonData = result.data?['pokemon_v2_pokemon'][0];
     return PokemonHero.fromJson(pokemonData);
   }
+   Future<PokemonAboutDescription> getDescription(int pokemonId) async{
+    const String query = '''
+      query MyQuery(\$pokemonId: Int!) {
+        pokemon_v2_pokemon(where: {id: {_eq: \$pokemonId}}) {
+          height
+          weight
+          pokemon_v2_pokemonspecy {
+            capture_rate
+            pokemon_v2_pokemonspeciesflavortexts(limit: 1) {
+              flavor_text
+            }
+          }
+        }
+      }
+    ''';
+
+    final QueryOptions options = QueryOptions(
+      document: gql(query),
+      variables: {'pokemonId': pokemonId},
+    );
+
+    final QueryResult result = await client.query(options);
+
+    if (result.hasException) {
+      throw Exception(result.exception.toString());
+    }
+
+    final data = result.data!['pokemon_v2_pokemon'][0];
+    return PokemonAboutDescription.fromJson(data);
+   }
+  
 
   // Future<List<Pokemon>> getPokemons() async {
   //   const String query = '''
@@ -297,15 +329,31 @@ class GraphQLService {
       throw Exception(result.exception.toString());
     }
 
-    final data = result.data!['pokemon_v2_pokemon'];
-    //print(data[0]['pokemon_v2_pokemonspecy']);
-    List<Evolution> evolutions = [];
-    for (final evo in data[0]['pokemon_v2_pokemonspecy']
-        ['pokemon_v2_evolutionchain']['pokemon_v2_pokemonspecies']) {
-      evolutions.add(Evolution.fromJson(evo));
-    }
+   final data = result.data!['pokemon_v2_pokemon'];
+List<Evolution> evolutions = [];
+final species = data[0]['pokemon_v2_pokemonspecy']
+    ['pokemon_v2_evolutionchain']['pokemon_v2_pokemonspecies'];
 
-    return evolutions;
+for (int i = 0; i < species.length; i++) {
+  final evo = species[i];
+  Map<String, dynamic> nextEvo;
+
+  if (i == 0) {
+   
+    nextEvo = {
+      'pokemon_v2_pokemonspecies': [
+        {'pokemon_v2_pokemonevolutions': [{'min_level': 1}]}
+      ]
+    };
+  } else {
+ 
+    nextEvo = species[i - 1];
+  }
+
+  evolutions.add(Evolution.fromJson([evo, nextEvo]));
+}
+
+return evolutions;
   }
 
   Future<List<Mega>> getMegaEvolution(int pokemonId) async {
