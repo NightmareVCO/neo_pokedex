@@ -375,6 +375,11 @@ return evolutions;
                 name
               }
             }
+            pokemon_v2_pokemonspecy{
+              pokemon_v2_pokemonevolutions{
+                min_level
+              }
+            }
           }
         }
       }
