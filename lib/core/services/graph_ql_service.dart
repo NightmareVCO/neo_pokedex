@@ -360,40 +360,62 @@ class GraphQLService {
 // FILTRADO
 
 // filtrado de tipo y order descendente
-  Future<List<Pokemon>> getPokemons(String order, String isDesc, int limit,
+  Future<List<Pokemon>> getPokemons(
+      String orderBy, String orderByDirecction, int limit, int offset,
       [String? type]) async {
-    bool isDescBool = isDesc == 'desc';
     String query = '''
-  query MyQuery(\$where: pokemon_v2_pokemon_bool_exp) {
-  pokemon_v2_pokemon(limit: ${(limit)}, order_by: {${(order)}: ${(isDescBool) ? 'desc' : 'asc'}}, where: \$where) {
-    id
-        name
-        pokemon_v2_pokemontypes {
-          pokemon_v2_type {
-            name
+      query MyQuery(\$where: pokemon_v2_pokemon_bool_exp, \$limit: Int, \$offset: Int, \$order: [pokemon_v2_pokemon_order_by!]) {
+        pokemon_v2_pokemon(
+          limit: \$limit,
+          offset: \$offset,
+          order_by: \$order
+          where: \$where
+        ) {
+          id
+          name
+          pokemon_v2_pokemontypes {
+            pokemon_v2_type {
+              name
+            }
+          }
+          pokemon_v2_pokemonsprites {
+            sprites(path: "other.official-artwork.front_default")
           }
         }
-        pokemon_v2_pokemonsprites {
-          sprites(path: "other.official-artwork.front_default")
-        }
-
-  }
-}
-  ''';
+      }
+    ''';
     // si el filtro esta vacio se debe retornar todos los pokemones
-    final filtro = <String, dynamic>{};
+    final where = <String, dynamic>{};
 
-    if (type != null) {
-      filtro['pokemon_v2_pokemontypes'] = {
+    if (type != null && type.isNotEmpty) {
+      where['pokemon_v2_pokemontypes'] = {
         'pokemon_v2_type': {
           'name': {'_eq': type}
         }
       };
     }
 
+    final order = <Map<String, dynamic>>[];
+    if (orderBy.isNotEmpty) {
+      if (orderBy == 'name') {
+        orderByDirecction = 'asc';
+      }
+
+      if (orderBy == 'id') {
+        orderByDirecction = 'asc';
+      }
+
+      order.add({orderBy: orderByDirecction});
+    }
+
     final QueryOptions options = QueryOptions(
       document: gql(query),
-      variables: {'where': filtro},
+      variables: {
+        'where': where,
+        'limit': limit,
+        'offset': offset,
+        'order': order,
+      },
     );
 
     final QueryResult result = await client.query(options);
