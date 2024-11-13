@@ -10,26 +10,22 @@ class PokemonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: pokemons.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10.0,
-              mainAxisSpacing: 10.0,
-              childAspectRatio: 1,
-            ),
-            itemBuilder: (_, index) {
-              final pokemon = pokemons[index];
-              return PokemonCard(
-                pokemon: pokemon,
-              );
-            },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        child: GridView.builder(
+          itemCount: pokemons.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 10.0,
+            mainAxisSpacing: 10.0,
+            childAspectRatio: 1,
           ),
+          itemBuilder: (_, index) {
+            final pokemon = pokemons[index];
+            return PokemonCard(
+              pokemon: pokemon,
+            );
+          },
         ),
       ),
     );
