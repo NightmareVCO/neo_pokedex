@@ -5,9 +5,9 @@ import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
 
 class PokemonMovesText extends StatelessWidget {
   const PokemonMovesText({
-    Key? key,
+    super.key,
     required this.pokemonMovesTabInfoDto,
-  }) : super(key: key);
+  });
 
   final PokemonMovesTabInfoDto pokemonMovesTabInfoDto;
 

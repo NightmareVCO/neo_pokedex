@@ -130,8 +130,7 @@ class PokemonEvolutionText extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 4.0, vertical: 2),
-                    child: Expanded(
-                        child: Container(
+                    child: Container(
                       decoration: BoxDecoration(
                         color: pokemonTypeColorsBg[type.toLowerCase()],
                         borderRadius: BorderRadius.circular(12),
@@ -157,7 +156,7 @@ class PokemonEvolutionText extends StatelessWidget {
                           ],
                         ),
                       ),
-                    )),
+                    ),
                   );
                 }).toList(),
               ),
