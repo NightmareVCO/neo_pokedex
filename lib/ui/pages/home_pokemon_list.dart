@@ -19,12 +19,12 @@ class PokemonListPage extends StatefulWidget {
 class _PokemonListPageState extends State<PokemonListPage> {
   late final GraphQLClient _client;
   late final GraphQLService _graphQLService;
-  List<models.Pokemon> _pokemons = [];
+  final List<models.Pokemon> _pokemons = [];
   int _offset = 0;
   int _limit = 20;
   bool _isLoading = false;
   bool _hasMore = true;
-  bool _isInitialized = false; // Nuevo flag
+  bool _isInitialized = false;
 
   String _orderBy = "";
   String _sort = "desc";
@@ -56,7 +56,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         _orderBy,
         _sort,
         _limit,
-        _offset, // Usar offset
+        _offset,
         _type,
       );
       setState(() {
@@ -71,7 +71,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
       setState(() {
         _isLoading = false;
       });
-      // Manejar el error según sea necesario
     }
   }
 

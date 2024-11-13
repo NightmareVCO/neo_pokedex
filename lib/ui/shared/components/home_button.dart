@@ -13,7 +13,11 @@ class HomeIconButton extends StatelessWidget {
         size: 30,
       ),
       onPressed: () {
-        Navigator.pop(context);
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/',
+          (Route<dynamic> route) => false,
+        );
       },
     );
   }
