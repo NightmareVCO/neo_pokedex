@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart';
-import 'package:neo_pokedex/ui/pages/page_pokemon_details.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
