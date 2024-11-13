@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:neo_pokedex/core/routes/routes.dart';
 import 'package:neo_pokedex/ui/pages/home_pokemon_list.dart';
-import 'package:neo_pokedex/core/models/pokemon_mega_evolutions.dart';
-import 'package:neo_pokedex/core/services/graph_ql_service.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   final client = initializeClient();
-  final service = GraphQLService(client.value);
-  service.getMegaEvolution(6);
-  runApp(MainApp(client: client));
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((_) {
+    runApp(MainApp(client: client));
+  });
 }
 
 //Aquí deberiamos inicializar el Provider de graphql.
