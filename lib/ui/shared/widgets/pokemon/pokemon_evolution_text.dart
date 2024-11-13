@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart';
+import 'package:neo_pokedex/ui/pages/page_pokemon_details.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
 
 class PokemonEvolutionText extends StatelessWidget {
-  const PokemonEvolutionText({
-    super.key,
-    required this.pokemonEvolutionTextDto,
-  });
+  const PokemonEvolutionText(
+      {super.key,
+      required this.pokemonEvolutionTextDto,
+      required this.originId});
 
   final List<PokemonEvolutionTextDto> pokemonEvolutionTextDto;
+  final int originId;
 
   @override
   Widget build(BuildContext context) {
@@ -60,29 +62,25 @@ class PokemonEvolutionText extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Cadena de evoluciones
-              _buildEvolutionChain(),
+              _buildEvolutionChain(context),
             ],
           )),
     );
   }
 
-  /// Construye la cadena de evoluciones en un diseño horizontal
-  Widget _buildEvolutionChain() {
+  Widget _buildEvolutionChain(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
-          children: _buildEvolutionWidgets(),
+          children: _buildEvolutionWidgets(context),
         ),
       ),
     );
   }
 
-  /// Construye la lista de widgets para cada etapa de evolución
-  List<Widget> _buildEvolutionWidgets() {
+  List<Widget> _buildEvolutionWidgets(BuildContext context) {
     List<Widget> widgets = [];
 
     for (int i = 0; i < pokemonEvolutionTextDto.length; i++) {
@@ -104,11 +102,23 @@ class PokemonEvolutionText extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Image.network(
-                evolution.imageUrl,
-                width: 80,
-                height: 80,
-                fit: BoxFit.contain,
+              GestureDetector(
+                onTap: () => {
+                  if (originId != int.parse(evolution.id))
+                    {
+                      Navigator.pushNamed(
+                        context,
+                        '/pokemon_page',
+                        arguments: int.parse(evolution.id),
+                      )
+                    }
+                },
+                child: Image.network(
+                  evolution.imageUrl,
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.contain,
+                ),
               ),
               Text(
                 'Lv. ${evolution.level}',

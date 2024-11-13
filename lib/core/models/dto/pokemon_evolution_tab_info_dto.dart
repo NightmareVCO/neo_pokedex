@@ -1,5 +1,6 @@
 import 'package:neo_pokedex/core/models/pokemon_evolutions.dart';
 import 'package:neo_pokedex/core/models/pokemon_mega_evolutions.dart';
+import 'package:neo_pokedex/utils/text_utils.dart';
 
 class PokemonEvolutionTabInfoDto {
   final String type;
@@ -53,9 +54,9 @@ class PokemonEvolutionTextDto {
       id: evolution.id,
       text: 'Evolves at level ${evolution.level}',
       level: evolution.level,
-      name: evolution.name,
+      name: toTitleCaseWithSpaces(evolution.name),
       imageUrl: evolution.sprite ?? '',
-      predecessor: '', // Populate as needed
+      predecessor: '',
       types: evolution.types,
     );
   }
@@ -65,10 +66,10 @@ class PokemonEvolutionTextDto {
       type: mega.types.first,
       id: mega.id,
       text: 'Mega evolves',
-      level: '', // Populate as needed
-      name: mega.name,
+      level: mega.level,
+      name: toTitleCaseWithSpaces(mega.name),
       imageUrl: mega.sprite,
-      predecessor: '', // Populate as needed
+      predecessor: '',
       types: mega.types,
     );
   }

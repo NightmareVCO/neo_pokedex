@@ -15,12 +15,14 @@ class PokemonTabsInfo extends StatelessWidget {
       required this.pokemonAboutTabInfoDto,
       required this.pokemonStatsTabInfoDto,
       required this.pokemonMovesTabInfoDto,
-      required this.pokemonEvolutionTabInfoDto});
+      required this.pokemonEvolutionTabInfoDto,
+      required this.originId});
 
   final PokemonAboutTabInfoDto pokemonAboutTabInfoDto;
   final PokemonStatsTabInfoDto pokemonStatsTabInfoDto;
   final PokemonMovesTabInfoDto pokemonMovesTabInfoDto;
   final PokemonEvolutionTabInfoDto pokemonEvolutionTabInfoDto;
+  final int originId;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,8 @@ class PokemonTabsInfo extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: PokemonEvolutionTab(
-                        pokemonEvolutionTabInfoDto: pokemonEvolutionTabInfoDto),
+                        pokemonEvolutionTabInfoDto: pokemonEvolutionTabInfoDto,
+                        originId: originId),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),

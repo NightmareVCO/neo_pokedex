@@ -45,6 +45,7 @@ class Pokemon extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           PokemonTabsInfo(
+            originId: pokemonHero.id,
             pokemonAboutTabInfoDto: pokemonAboutTabInfoDto,
             pokemonStatsTabInfoDto: pokemonStatsTabInfoDto,
             pokemonMovesTabInfoDto: pokemonMovesTabInfoDto,
