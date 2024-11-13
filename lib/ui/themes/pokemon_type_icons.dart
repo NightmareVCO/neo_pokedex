@@ -1,0 +1,25 @@
+import 'package:flutter/material.dart';
+
+Map<String, IconData> pokemonTypeIcons = {
+  "normal": Icons.circle,
+  "fighting": Icons.back_hand,
+  "flying": Icons.cloud,
+  "poison": Icons.bug_report,
+  "ground": Icons.public,
+  "rock": Icons.terrain,
+  "bug": Icons.bug_report,
+  "ghost": Icons.foggy,
+  "steel": Icons.build,
+  "fire": Icons.whatshot,
+  "water": Icons.water_drop,
+  "grass": Icons.eco,
+  "electric": Icons.flash_on,
+  "psychic": Icons.psychology,
+  "ice": Icons.ac_unit,
+  "dragon": Icons.whatshot,
+  "dark": Icons.brightness_3,
+  "fairy": Icons.favorite,
+  "stellar": Icons.star,
+  "unknown": Icons.help,
+  "shadow": Icons.nightlight_round,
+};

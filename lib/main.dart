@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:neo_pokedex/core/routes/routes.dart';
+import 'package:neo_pokedex/ui/pages/home_pokemon_list.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MainApp());
 }
 
+//TODO: Aquí deberiamos inicializar el Provider de graphql.
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      title: 'Neo Pokedex',
+      routes: routes,
+      initialRoute: PokemonListPage.routeName,
     );
   }
 }

@@ -47,3 +47,7 @@ windows/
 macos/
 linux/
 web/
+ios/
+android/
+
+test/
