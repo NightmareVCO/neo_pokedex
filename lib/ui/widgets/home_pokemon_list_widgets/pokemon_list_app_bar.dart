@@ -4,7 +4,26 @@ import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
 import 'package:neo_pokedex/utils/text_utils.dart';
 
 class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const PokemonListAppBar({super.key});
+  final String orderBy;
+  final int limit;
+  final String sort;
+  final String type;
+  final ValueChanged<String> onOrderByChanged;
+  final ValueChanged<int> onLimitChanged;
+  final ValueChanged<String> onSortChanged;
+  final ValueChanged<String> onTypeChanged;
+
+  const PokemonListAppBar({
+    super.key,
+    required this.orderBy,
+    required this.limit,
+    required this.sort,
+    required this.type,
+    required this.onOrderByChanged,
+    required this.onLimitChanged,
+    required this.onSortChanged,
+    required this.onTypeChanged,
+  });
 
   @override
   State<PokemonListAppBar> createState() => _PokemonListAppBarState();
@@ -14,9 +33,6 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _PokemonListAppBarState extends State<PokemonListAppBar> {
-  String _selectedType = '';
-  String _selectedSortOption = '';
-
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -92,7 +108,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
   List<Widget> _buildFilterChips() {
     List<Widget> chips = [];
 
-    if (_selectedType.isNotEmpty) {
+    if (widget.type.isNotEmpty) {
       chips.add(
         Chip(
           shape: RoundedRectangleBorder(
@@ -102,41 +118,35 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
             color: Colors.transparent,
           ),
           label: Text(
-            toTitleCase(_selectedType),
+            toTitleCase(widget.type),
             style: const TextStyle(color: Colors.white),
           ),
           avatar: Icon(
-            pokemonTypeIcons[_selectedType],
+            pokemonTypeIcons[widget.type],
             color: Colors.white,
           ),
-          backgroundColor: pokemonTypeColorsBg[_selectedType],
+          backgroundColor: pokemonTypeColorsBg[widget.type],
           deleteIconColor: Colors.white,
           onDeleted: () {
-            setState(() {
-              _selectedType = '';
-            });
+            widget.onTypeChanged('');
             // Actualiza la lista de Pokémon filtrada
           },
         ),
       );
     }
 
-    if (_selectedSortOption.isNotEmpty) {
+    if (widget.orderBy.isNotEmpty) {
       String sortLabel = '';
       IconData sortIcon = Icons.sort;
 
-      switch (_selectedSortOption) {
+      switch (widget.orderBy) {
         case 'name':
           sortLabel = 'Name';
           sortIcon = Icons.sort_by_alpha;
           break;
-        case 'order':
-          sortLabel = 'Order';
+        case 'id':
+          sortLabel = 'ID';
           sortIcon = Icons.format_list_numbered;
-          break;
-        case 'type':
-          sortLabel = 'Type';
-          sortIcon = Icons.category;
           break;
       }
 
@@ -156,10 +166,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           backgroundColor: Colors.amber,
           deleteIconColor: Colors.white,
           onDeleted: () {
-            setState(() {
-              _selectedSortOption = '';
-            });
-            // Actualiza la lista de Pokémon ordenada
+            widget.onOrderByChanged('');
           },
         ),
       );
@@ -195,9 +202,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
     );
 
     if (selectedType != null) {
-      setState(() {
-        _selectedType = selectedType;
-      });
+      widget.onTypeChanged(selectedType);
       // Filtrado
     }
   }
@@ -210,35 +215,27 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           children: [
             ListTile(
               leading: const Icon(Icons.sort_by_alpha),
-              title: const Text('Nombre'),
+              title: const Text('name'), // Changed to lowercase
               onTap: () {
                 Navigator.pop(context, 'name');
               },
             ),
             ListTile(
               leading: const Icon(Icons.format_list_numbered),
-              title: const Text('Orden'),
+              title:
+                  const Text('id'), // Changed to lowercase and removed 'type'
               onTap: () {
-                Navigator.pop(context, 'order');
+                Navigator.pop(context, 'id');
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.category),
-              title: const Text('Tipo'),
-              onTap: () {
-                Navigator.pop(context, 'type');
-              },
-            ),
+            // Removed the 'Type' sorting option
           ],
         );
       },
     );
 
     if (selectedOption != null) {
-      setState(() {
-        _selectedSortOption = selectedOption;
-      });
-      // Aquí puedes aplicar la lógica de ordenamiento en tu lista de Pokémon
+      widget.onOrderByChanged(selectedOption);
     }
   }
 }
