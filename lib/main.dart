@@ -1,22 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:neo_pokedex/core/routes/routes.dart';
-import 'package:neo_pokedex/ui/pages/home_pokemon_list.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:neo_pokedex/ui/pages/page_pokemon_details.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MainApp());
+  final client = initializeClient();
+  runApp(MainApp(client: client));
 }
 
-//TODO: Aquí deberiamos inicializar el Provider de graphql.
+//Aquí deberiamos inicializar el Provider de graphql.
+
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final ValueNotifier<GraphQLClient> client;
+  const MainApp({super.key, required this.client});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Neo Pokedex',
-      routes: routes,
-      initialRoute: PokemonListPage.routeName,
+    return GraphQLProvider(
+      client: client,
+      child: const MaterialApp(
+        title: 'Neo Pokedex',
+        home: PokemonPage(),
+      ),
+      
     );
   }
 }
+
+ValueNotifier<GraphQLClient> initializeClient() {
+  final HttpLink httpLink = HttpLink(
+    'https://beta.pokeapi.co/graphql/v1beta',
+  );
+
+  final ValueNotifier<GraphQLClient> client = ValueNotifier(
+    GraphQLClient(
+      cache: GraphQLCache(),
+      link: httpLink,
+    ),
+  );
+
+  return client;
+}
+

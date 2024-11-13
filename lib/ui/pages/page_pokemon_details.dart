@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:neo_pokedex/core/services/graph_ql_service.dart';
+import 'package:neo_pokedex/core/models/pokemon.dart' as models;
 import 'package:neo_pokedex/ui/shared/widgets/circle_background.dart';
 import 'package:neo_pokedex/ui/shared/widgets/pokeball_barkground.dart';
 import 'package:neo_pokedex/ui/themes/pokeball_background_colors.dart';
@@ -17,7 +20,7 @@ import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_app_
 
 class PokemonPage extends StatefulWidget {
   static const String routeName = '/pokemon_page';
-
+  
   const PokemonPage({super.key});
 
   @override
@@ -29,13 +32,16 @@ class _PokemonPageState extends State<PokemonPage> {
   final ScrollController _scrollController = ScrollController();
   double _scrollOffset = 0.0;
   final double maxScrollOffset = 320.0;
+  
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-  }
 
+    
+    
+  }
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
@@ -61,9 +67,11 @@ class _PokemonPageState extends State<PokemonPage> {
   final String habitat = "forest";
   final List<String> types = ["fire", "flying"];
   final String imageUrl =
-      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/6.png";
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/6.png";
   final String cryUrl =
-      "https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/9.ogg";
+  "https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/9.ogg";
+
+  
 
   //TODO: Aquí deberiamos recibir el objeto del pokemon
   /*
@@ -99,6 +107,7 @@ class _PokemonPageState extends State<PokemonPage> {
   //TODO: Esto deberia recibir el objeto del pokemon como tal
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
