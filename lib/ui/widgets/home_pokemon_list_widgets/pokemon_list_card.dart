@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:neo_pokedex/core/models/pokemon.dart';
 import 'package:neo_pokedex/ui/shared/components/heart_button.dart';
 import 'package:neo_pokedex/ui/shared/widgets/pokeball_barkground.dart';
 import 'package:neo_pokedex/ui/themes/pokeball_background_colors.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
+import 'package:neo_pokedex/utils/text_utils.dart';
 
 class PokemonCard extends StatelessWidget {
-  //TODO: Esto deberia recibir el objeto del pokemon como tal
-  const PokemonCard(
-      {super.key,
-      required this.color,
-      required this.imageUrl,
-      required this.name,
-      required this.number,
-      required this.types});
+  const PokemonCard({super.key, required this.pokemon});
 
-  final Color color;
-  final String imageUrl;
-  final String name;
-  final String number;
-  final List<String> types;
+  final Pokemon pokemon;
 
   @override
   Widget build(BuildContext context) {
-    List<Color> colors =
-        types.map((type) => pokemonTypeColorsBg[type] ?? Colors.grey).toList();
+    List<Color> colors = pokemon.types
+        .map((type) => pokemonTypeColorsBg[type] ?? Colors.grey)
+        .toList();
 
     if (colors.length == 1) {
       colors = [colors.first, colors.first];
     }
 
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/pokemon_page'),
+      onTap: () => Navigator.pushNamed(
+        context,
+        '/pokemon_page',
+        arguments: pokemon.id,
+      ),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
         height: 200,
@@ -42,19 +38,19 @@ class PokemonCard extends StatelessWidget {
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
           ),
-          color: color,
+          color: pokemonTypeColorsBg[pokemon.types.first],
           borderRadius: BorderRadius.circular(20),
         ),
         child: Stack(
           children: [
             //like button
             const Positioned(
-                top: 10, right: 0, child: HeartIconButton(color: Colors.white)),
+                top: -2, right: 0, child: HeartIconButton(color: Colors.white)),
             Positioned(
               top: 10,
               left: 15,
               child: Text(
-                '# $number',
+                '# ${pokemon.id.toString().padLeft(3, '0')}',
                 style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -62,21 +58,29 @@ class PokemonCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 25,
+              top: 37,
               left: 15,
-              child: Text(
-                name,
-                style: const TextStyle(
+              child: SizedBox(
+                width: 160,
+                child: Text(
+                  toTitleCaseWithSpaces(pokemon.name),
+                  style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
-                    fontSize: 20),
+                    fontSize: pokemon.name.length >= 14
+                        ? 18
+                        : pokemon.name.length >= 17
+                            ? 16
+                            : 20,
+                  ),
+                ),
               ),
             ),
             Positioned(
-              bottom: 35,
+              bottom: 15,
               left: 15,
               child: Column(
-                children: types
+                children: pokemon.types
                     .map((type) => Container(
                         margin: const EdgeInsets.only(top: 5),
                         padding: const EdgeInsets.symmetric(
@@ -102,11 +106,12 @@ class PokemonCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Hero(
-                      tag: number,
+                      tag: pokemon.id,
                       child: CircleAvatar(
                         radius: 55,
                         backgroundColor: Colors.transparent,
-                        backgroundImage: NetworkImage(imageUrl, scale: 2),
+                        backgroundImage:
+                            NetworkImage(pokemon.imageUrl, scale: 2),
                       ),
                     )
                   ],

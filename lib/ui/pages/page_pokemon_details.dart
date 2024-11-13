@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:neo_pokedex/core/models/pokemon_hero.dart';
 import 'package:neo_pokedex/core/services/graph_ql_service.dart';
-import 'package:neo_pokedex/core/models/pokemon.dart' as models;
 import 'package:neo_pokedex/ui/shared/widgets/circle_background.dart';
 import 'package:neo_pokedex/ui/shared/widgets/pokeball_barkground.dart';
 import 'package:neo_pokedex/ui/themes/pokeball_background_colors.dart';
-import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_app_bar.dart';
-
-//TODO: Aquí tenemos que pedir la data con graphql
-/*
-  1. Crear una clase que se encargue de hacer la consulta a la api (core/services/graph_ql_service.dart)
-  2. Crear un modelo que se encargue de parsear la data (core/models/pokemon.dart) - Usa de referencia la consulta pokemon-hero.png para saber que data necesitas
-  3. Recibir el id del pokemon que se quiere mostrar en la página
-  4. Hacer la consulta a la api con el id del pokemon
-  5. Mostrar la data en la página
-  6. Mostrar un loader mientras se carga la data (vladimir)
-*/
+import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon.dart';
+import 'package:neo_pokedex/utils/text_utils.dart';
+// Added imports for DTOs
+import 'package:neo_pokedex/core/models/dto/pokemon_about_tab_info_dto.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_moves_tab_info_dto.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_stats_tab_info_dto.dart';
 
 class PokemonPage extends StatefulWidget {
   static const String routeName = '/pokemon_page';
-  
+
   const PokemonPage({super.key});
 
   @override
@@ -30,18 +26,30 @@ class PokemonPage extends StatefulWidget {
 
 class _PokemonPageState extends State<PokemonPage> {
   final ScrollController _scrollController = ScrollController();
-  double _scrollOffset = 0.0;
+  final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
   final double maxScrollOffset = 320.0;
-  
+
+  late final GraphQLService _graphQLService;
+  late final int id;
+  bool _isInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialized) {
+      final client = GraphQLProvider.of(context).value;
+      _graphQLService = GraphQLService(client);
+      id = ModalRoute.of(context)?.settings.arguments as int;
+      _isInitialized = true;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-
-    
-    
   }
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
@@ -54,91 +62,168 @@ class _PokemonPageState extends State<PokemonPage> {
       _scrollController.jumpTo(maxScrollOffset);
     }
 
-    setState(() {
-      _scrollOffset = _scrollController.position.pixels > maxScrollOffset
-          ? maxScrollOffset
-          : _scrollController.position.pixels;
-    });
+    _scrollOffset.value = _scrollController.position.pixels > maxScrollOffset
+        ? maxScrollOffset
+        : _scrollController.position.pixels;
   }
 
-  // Esto es lo que hay de momento:
-  final String name = "Charizard";
-  final String number = "006";
-  final String habitat = "forest";
-  final List<String> types = ["fire", "flying"];
-  final String imageUrl =
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/6.png";
-  final String cryUrl =
-  "https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/9.ogg";
+  Future<Map<String, dynamic>> fetchAllPokemonData(int id) async {
+    final pokemon = await _graphQLService.getPokemonById(id);
+    final type = await _graphQLService.getPokemonTypeById(id);
+    final stats = await _graphQLService.getPokemonStatsById(id);
+    final moves = await _graphQLService.fetchPokemonMoves(id);
+    final eggGroups = await _graphQLService.getEggGroups(id);
+    final breeding = await _graphQLService.getBreedingData(id);
+    final evolutions = await _graphQLService.getPokemonsEvolutions(id);
+    final megaEvolutions = await _graphQLService.getMegaEvolution(id);
+    final about = await _graphQLService.getDescription(id);
 
-  
+    final PokemonAboutTabInfoDto aboutDto = PokemonAboutTabInfoDto(
+      type: type.name,
+      pokemonFlavourTextDto: PokemonFlavourTextDto(
+        type: type.name,
+        about: removeNewLines(about.description),
+        captureRate: about.captureRate.toString(),
+        height: about.height.toString(),
+        weight: about.weight.toString(),
+      ),
+      pokemonInformationTextDto: PokemonInformationTextDto(
+        type: type.name,
+        baseExperience: breeding.pokemons.first.baseExperience.toString(),
+        growthRate: breeding.growthRate,
+        shape: breeding.shape,
+        isLegendary: breeding.isLegendary ? "Is legendary" : "Is not legendary",
+        isMythical: breeding.isMythical ? "Is mythical" : "Is not mythical",
+      ),
+      pokemonBreedingTextDto: PokemonBreedingTextDto(
+        type: type.name,
+        eggCycle: breeding.hatchCounter,
+        eggGroups: eggGroups.map((e) => toTitleCase(e.eggGroupName)).toList(),
+      ),
+    );
 
-  //TODO: Aquí deberiamos recibir el objeto del pokemon
-  /*
-    Como dije, aquí deberiamos recibir el objeto del pokemon, por ejemplo:
-    final Pokemon pokemon = getPokemonById(1);
+    final PokemonStatsTabInfoDto statsDto = PokemonStatsTabInfoDto(
+      pokemonStatsTextDto: PokemonStatsTextDto(
+        type: type.name,
+        attack: double.parse(stats[0].statValue),
+        defense: double.parse(stats[1].statValue),
+        specialAttack: double.parse(stats[2].statValue),
+        specialDefense: double.parse(stats[3].statValue),
+        speed: double.parse(stats[4].statValue),
+      ),
+      pokemonTypeEffectivenessTextDto: PokemonTypeEffectivenessTextDto(
+        type: type.name,
+      ),
+    );
 
-    Ese metodo deberia estar en el archivo core/services/graph_ql_pokemon.dart
-    y deberia ser algo como:
-    Pokemon getPokemonById(int id) {
-      // Aquí deberiamos hacer la consulta a la api
-    }
+    final PokemonMovesTabInfoDto movesDto = PokemonMovesTabInfoDto(
+      type: type.name,
+      moves: moves.map((move) => PokemonMoveTextDto.fromMove(move)).toList(),
+    );
 
-    La CLASE pokemon deberia tener algun metodo que se encargue de parsear la data que recibe de la api
-    y deberia ser algo como:
-    public static Pokemon parseJson(Map<String, dynamic> json) {
-      Aquí deberiamos parsear la data
-      return Pokemon(
-        name: json['name'],
-        number: json['number'],
-        habitat: json['habitat'],
-        types: json['types'],
-        imageUrl: json['imageUrl'],
-        cryUrl: json['cryUrl'],
-      );
+    final PokemonEvolutionTabInfoDto evolutionsDto = PokemonEvolutionTabInfoDto(
+      type: type.name,
+      pokemonEvolutionTextDto: evolutions
+          .map((evolution) => PokemonEvolutionTextDto.fromEvolution(evolution))
+          .toList(),
+      pokemonMegaEvolutionTextDto: megaEvolutions
+          .map((mega) => PokemonEvolutionTextDto.fromMegaEvolution(mega))
+          .toList(),
+    );
 
-      Lo de arriba es solo un ejemplo, hay que ver como realmente es la data que nos llega de la api
-    }
+    return {
+      'pokemon': pokemon,
+      'pokemonAboutTabInfoDto': aboutDto,
+      'pokemonStatsTabInfoDto': statsDto,
+      'pokemonMovesTabInfoDto': movesDto,
+      'pokemonEvolutionTabInfoDto': evolutionsDto,
+    };
+  }
 
-  */
+  Widget _buildLoadingState() {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: PokemonAppBar(
+        scrollOffsetNotifier: _scrollOffset,
+        type: 'unknown',
+        imageUrl: '',
+        name: '',
+      ),
+      body: const Center(child: CircularProgressIndicator()),
+    );
+  }
 
-  //TODO: cuando tengas eso, la idea es que pruebes cambiado el id del pokemon que quieres mostrar en la página y que se muestre la data del pokemon que corresponda (puede que haya que hacer varios cambios para lograr esto, como cambiar de stateless a stateful, etc)
+  Widget _buildErrorState(Object error) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: PokemonAppBar(
+        scrollOffsetNotifier: _scrollOffset,
+        type: 'unknown',
+        imageUrl: '',
+        name: '',
+      ),
+      body: Center(child: Text('Error: $error')),
+    );
+  }
 
-  //TODO: Esto deberia recibir el objeto del pokemon como tal
+  Widget _buildPokemonDetails(Map<String, dynamic> data) {
+    final PokemonHero pokemon = data['pokemon'];
+    final PokemonAboutTabInfoDto aboutDto = data['pokemonAboutTabInfoDto'];
+    final PokemonStatsTabInfoDto statsDto = data['pokemonStatsTabInfoDto'];
+    final PokemonMovesTabInfoDto movesDto = data['pokemonMovesTabInfoDto'];
+    final PokemonEvolutionTabInfoDto evolutionsDto =
+        data['pokemonEvolutionTabInfoDto'];
+
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: PokemonAppBar(
+        scrollOffsetNotifier: _scrollOffset,
+        type: evolutionsDto.type,
+        imageUrl: pokemon.imageUrl,
+        name: toTitleCaseWithSpaces(pokemon.name),
+      ),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Stack(
+          children: [
+            CircleBackGround(types: pokemon.types),
+            const Positioned(
+              top: 100,
+              right: -100,
+              child: PokeballBackground(color: PokeballBackgroundColors.white),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
+              child: Pokemon(
+                pokemonHero: pokemon,
+                pokemonAboutTabInfoDto: aboutDto,
+                pokemonStatsTabInfoDto: statsDto,
+                pokemonMovesTabInfoDto: movesDto,
+                pokemonEvolutionTabInfoDto: evolutionsDto,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    
-    return Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.white,
-        appBar: PokemonAppBar(
-            scrollOffset: _scrollOffset, type: types.first, imageUrl: imageUrl),
-        // appBar: PokemonAppBar(
-        // scrollOffset: _scrollOffset, type: pokemon.types.first, imageUrl: pokemon.imageUrl),
-        body: SingleChildScrollView(
-          controller: _scrollController,
-          child: Stack(
-            children: [
-              CircleBackGround(types: types),
-              // CircleBackGround(types: pokemon.types),
-              const Positioned(
-                  top: 100,
-                  right: -100,
-                  child: PokeballBackground(
-                      color: PokeballBackgroundColors.white)),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
-                // child: Pokemon(pokemon: pokemon),
-                child: Pokemon(
-                    name: name,
-                    number: number,
-                    habitat: habitat,
-                    types: types,
-                    imageUrl: imageUrl,
-                    cryUrl: cryUrl),
-              ),
-            ],
-          ),
-        ));
+    return FutureBuilder<Map<String, dynamic>>(
+      future: fetchAllPokemonData(id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingState();
+        }
+        if (snapshot.hasError) return _buildErrorState(snapshot.error!);
+        if (!snapshot.hasData) return _buildErrorState('No Pokémon found');
+
+        return _buildPokemonDetails(snapshot.data!);
+      },
+    );
   }
 }

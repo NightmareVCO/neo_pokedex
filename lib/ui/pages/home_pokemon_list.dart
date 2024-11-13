@@ -19,51 +19,145 @@ class PokemonListPage extends StatefulWidget {
 class _PokemonListPageState extends State<PokemonListPage> {
   late final GraphQLClient _client;
   late final GraphQLService _graphQLService;
-  late Future<List<models.Pokemon>> _pokemonFuture;
-  //late Future<models.Pokemon> _pokemonFuture;
+  List<models.Pokemon> _pokemons = [];
+  int _offset = 0;
+  int _limit = 20;
+  bool _isLoading = false;
+  bool _hasMore = true;
+  bool _isInitialized = false; // Nuevo flag
+
+  String _orderBy = "";
+  String _sort = "desc";
+  String _type = "";
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _client = GraphQLProvider.of(context).value;
-    _graphQLService = GraphQLService(_client);
+    if (!_isInitialized) {
+      _client = GraphQLProvider.of(context).value;
+      _graphQLService = GraphQLService(_client);
+      _fetchPokemons();
+      _isInitialized = true;
+    }
+  }
 
-    // Realiza la consulta para obtener los datos del Pokémon con ID específico
-   // _pokemonFuture = _graphQLService.getPokemonById(1); // Cambia el ID según sea necesario
-    _pokemonFuture = _graphQLService.getPokemons(); 
+  Future<void> _fetchPokemons() async {
+    if (_isLoading || !_hasMore) return;
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      List<models.Pokemon> fetchedPokemons = await _graphQLService.getPokemons(
+        _orderBy,
+        _sort,
+        _limit,
+        _offset, // Usar offset
+        _type,
+      );
+      setState(() {
+        _pokemons.addAll(fetchedPokemons);
+        _offset += _limit;
+        _isLoading = false;
+        if (fetchedPokemons.length < _limit) {
+          _hasMore = false;
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Manejar el error según sea necesario
+    }
+  }
+
+  void _updateOrderBy(String newOrderBy) {
+    setState(() {
+      _orderBy = newOrderBy;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void _updateLimit(int newLimit) {
+    setState(() {
+      _limit = newLimit;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void _updateSort(String newSort) {
+    setState(() {
+      _sort = newSort;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void _updateType(String newType) {
+    setState(() {
+      _type = newType;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<models.Pokemon>>(
-    //return FutureBuilder<models.Pokemon>(
-      future: _pokemonFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData) {
-          return const Center(child: Text('No Pokémon found'));
-        } else {
-          return Stack(
-            children: [
-              Scaffold(
-                extendBodyBehindAppBar: true,
-                backgroundColor: Colors.white,
-                appBar: const PokemonListAppBar(),
-                //body: PokemonList(pokemons: [snapshot.data!]),
-                body: PokemonList(pokemons: snapshot.data!),
-              ),
-              const Positioned(
-                top: 40,
-                right: 10,
-                child: PokeballBackground(color: PokeballBackgroundColors.black),
-              ),
-            ],
-          );
-        }
-      },
+    return Stack(
+      children: [
+        Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.white,
+          appBar: PokemonListAppBar(
+            orderBy: _orderBy,
+            limit: _limit,
+            sort: _sort,
+            type: _type,
+            onOrderByChanged: _updateOrderBy,
+            onLimitChanged: _updateLimit,
+            onSortChanged: _updateSort,
+            onTypeChanged: _updateType,
+          ),
+          body: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (!_isLoading &&
+                  _hasMore &&
+                  scrollInfo.metrics.pixels ==
+                      scrollInfo.metrics.maxScrollExtent) {
+                _fetchPokemons();
+              }
+              return false;
+            },
+            child: PokemonList(pokemons: _pokemons),
+          ),
+        ),
+        const Positioned(
+          top: 40,
+          right: 10,
+          child: PokeballBackground(color: PokeballBackgroundColors.black),
+        ),
+        if (_isLoading)
+          const Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+      ],
     );
   }
 }

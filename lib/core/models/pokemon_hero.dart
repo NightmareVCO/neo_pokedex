@@ -4,7 +4,7 @@ class PokemonHero {
   final String habitat;
   final List<String> types;
   final String imageUrl;
-  final String cryUrl; // Added the cryUrl field
+  final String cryUrl;
 
   PokemonHero({
     required this.id,
@@ -12,7 +12,7 @@ class PokemonHero {
     required this.habitat,
     required this.types,
     required this.imageUrl,
-    required this.cryUrl, // Added to the constructor
+    required this.cryUrl,
   });
 
   // Parse JSON
@@ -20,12 +20,14 @@ class PokemonHero {
     return PokemonHero(
       id: json['id'],
       name: json['name'],
-      habitat: json['pokemon_v2_pokemonspecy']['habitat']['name'] ?? 'unknown',
+      habitat: json['pokemon_v2_pokemonspecy']['habitat']?['name'] ?? 'unknown',
       types: (json['pokemon_v2_pokemontypes'] as List)
           .map((type) => type['pokemon_v2_type']['name'] as String)
           .toList(),
-      imageUrl: json['pokemon_v2_pokemonsprites'][0]['sprites'] ?? '',
-      cryUrl: json['pokemon_v2_pokemonspecy']['cryUrl'] ?? '', // Added to fromJson
+      imageUrl: json['pokemon_v2_pokemonsprites'].isNotEmpty
+          ? json['pokemon_v2_pokemonsprites'][0]['sprites'] ?? ''
+          : '',
+      cryUrl: json['pokemon_v2_pokemoncries'][0]['cries'] ?? '',
     );
   }
 }

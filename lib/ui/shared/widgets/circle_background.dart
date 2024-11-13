@@ -10,6 +10,10 @@ class CircleBackGround extends StatelessWidget {
     List<Color> colors =
         types.map((type) => pokemonTypeColorsBg[type] ?? Colors.grey).toList();
 
+    if (colors.length == 1) {
+      colors = [colors.first, colors.first];
+    }
+
     return Positioned(
       top: -210,
       right: -100,
