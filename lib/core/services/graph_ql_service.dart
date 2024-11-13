@@ -56,7 +56,8 @@ class GraphQLService {
     final pokemonData = result.data?['pokemon_v2_pokemon'][0];
     return PokemonHero.fromJson(pokemonData);
   }
-   Future<PokemonAboutDescription> getDescription(int pokemonId) async{
+
+  Future<PokemonAboutDescription> getDescription(int pokemonId) async {
     const String query = '''
       query MyQuery(\$pokemonId: Int!) {
         pokemon_v2_pokemon(where: {id: {_eq: \$pokemonId}}) {
@@ -85,8 +86,7 @@ class GraphQLService {
 
     final data = result.data!['pokemon_v2_pokemon'][0];
     return PokemonAboutDescription.fromJson(data);
-   }
-  
+  }
 
   // Future<List<Pokemon>> getPokemons() async {
   //   const String query = '''
@@ -329,31 +329,33 @@ class GraphQLService {
       throw Exception(result.exception.toString());
     }
 
-   final data = result.data!['pokemon_v2_pokemon'];
-List<Evolution> evolutions = [];
-final species = data[0]['pokemon_v2_pokemonspecy']
-    ['pokemon_v2_evolutionchain']['pokemon_v2_pokemonspecies'];
+    final data = result.data!['pokemon_v2_pokemon'];
+    List<Evolution> evolutions = [];
+    final species = data[0]['pokemon_v2_pokemonspecy']
+        ['pokemon_v2_evolutionchain']['pokemon_v2_pokemonspecies'];
 
-for (int i = 0; i < species.length; i++) {
-  final evo = species[i];
-  Map<String, dynamic> nextEvo;
+    for (int i = 0; i < species.length; i++) {
+      final evo = species[i];
+      Map<String, dynamic> nextEvo;
 
-  if (i == 0) {
-   
-    nextEvo = {
-      'pokemon_v2_pokemonspecies': [
-        {'pokemon_v2_pokemonevolutions': [{'min_level': 1}]}
-      ]
-    };
-  } else {
- 
-    nextEvo = species[i - 1];
-  }
+      if (i == 0) {
+        nextEvo = {
+          'pokemon_v2_pokemonspecies': [
+            {
+              'pokemon_v2_pokemonevolutions': [
+                {'min_level': 1}
+              ]
+            }
+          ]
+        };
+      } else {
+        nextEvo = species[i - 1];
+      }
 
-  evolutions.add(Evolution.fromJson([evo, nextEvo]));
-}
+      evolutions.add(Evolution.fromJson([evo, nextEvo]));
+    }
 
-return evolutions;
+    return evolutions;
   }
 
   Future<List<Mega>> getMegaEvolution(int pokemonId) async {
