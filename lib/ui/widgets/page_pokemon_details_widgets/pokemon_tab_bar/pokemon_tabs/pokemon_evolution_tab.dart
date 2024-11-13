@@ -5,9 +5,12 @@ import 'package:neo_pokedex/ui/shared/widgets/pokemon/pokemon_evolutions_forms_t
 
 class PokemonEvolutionTab extends StatelessWidget {
   const PokemonEvolutionTab(
-      {super.key, required this.pokemonEvolutionTabInfoDto});
+      {super.key,
+      required this.pokemonEvolutionTabInfoDto,
+      required this.originId});
 
   final PokemonEvolutionTabInfoDto pokemonEvolutionTabInfoDto;
+  final int originId;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,8 @@ class PokemonEvolutionTab extends StatelessWidget {
         children: [
           PokemonEvolutionText(
               pokemonEvolutionTextDto:
-                  pokemonEvolutionTabInfoDto.pokemonEvolutionTextDto),
+                  pokemonEvolutionTabInfoDto.pokemonEvolutionTextDto,
+              originId: originId),
           PokemonEvolutionFormsText(
               pokemonEvolutionTextDto:
                   pokemonEvolutionTabInfoDto.pokemonMegaEvolutionTextDto)

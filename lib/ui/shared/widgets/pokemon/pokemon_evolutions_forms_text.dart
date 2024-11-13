@@ -16,6 +16,10 @@ class PokemonEvolutionFormsText extends StatelessWidget {
   Widget build(BuildContext context) {
     final String type = pokemonEvolutionTextDto.first.type;
 
+    if (pokemonEvolutionTextDto.length == 1) {
+      return const SizedBox();
+    }
+
     return Card(
       color: Colors.white,
       shadowColor: pokemonTypeColors[type],
@@ -62,30 +66,30 @@ class PokemonEvolutionFormsText extends StatelessWidget {
               const SizedBox(height: 20),
 
               // Cadena de evoluciones
-              _buildEvolutionChain(),
+              _buildEvolutionChain(context),
             ],
           )),
     );
   }
 
   /// Construye la cadena de evoluciones en un diseño horizontal
-  Widget _buildEvolutionChain() {
+  Widget _buildEvolutionChain(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
-          children: _buildEvolutionWidgets(),
+          children: _buildEvolutionWidgets(context),
         ),
       ),
     );
   }
 
   /// Construye la lista de widgets para cada etapa de evolución
-  List<Widget> _buildEvolutionWidgets() {
+  List<Widget> _buildEvolutionWidgets(BuildContext context) {
     List<Widget> widgets = [];
 
-    for (int i = 0; i < pokemonEvolutionTextDto.length; i++) {
+    for (int i = 1; i < pokemonEvolutionTextDto.length; i++) {
       final evolution = pokemonEvolutionTextDto[i];
 
       widgets.add(Padding(
@@ -110,11 +114,18 @@ class PokemonEvolutionFormsText extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Image.network(
-                  evolution.imageUrl,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.contain,
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    '/pokemon_page',
+                    arguments: int.parse(evolution.id),
+                  ),
+                  child: Image.network(
+                    evolution.imageUrl,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 Text(
                   'Lv. ${evolution.level}',

@@ -31,13 +31,17 @@ class _PokemonPageState extends State<PokemonPage> {
 
   late final GraphQLService _graphQLService;
   late final int id;
+  bool _isInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final client = GraphQLProvider.of(context).value;
-    _graphQLService = GraphQLService(client);
-    id = ModalRoute.of(context)?.settings.arguments as int;
+    if (!_isInitialized) {
+      final client = GraphQLProvider.of(context).value;
+      _graphQLService = GraphQLService(client);
+      id = ModalRoute.of(context)?.settings.arguments as int;
+      _isInitialized = true;
+    }
   }
 
   @override
@@ -72,15 +76,16 @@ class _PokemonPageState extends State<PokemonPage> {
     final breeding = await _graphQLService.getBreedingData(id);
     final evolutions = await _graphQLService.getPokemonsEvolutions(id);
     final megaEvolutions = await _graphQLService.getMegaEvolution(id);
+    final about = await _graphQLService.getDescription(id);
 
     final PokemonAboutTabInfoDto aboutDto = PokemonAboutTabInfoDto(
       type: type.name,
       pokemonFlavourTextDto: PokemonFlavourTextDto(
         type: type.name,
-        about: "n/a",
-        captureRate: "n/a",
-        height: "n/a",
-        weight: "n/a",
+        about: removeNewLines(about.description),
+        captureRate: about.captureRate.toString(),
+        height: about.height.toString(),
+        weight: about.weight.toString(),
       ),
       pokemonInformationTextDto: PokemonInformationTextDto(
         type: type.name,
@@ -93,7 +98,7 @@ class _PokemonPageState extends State<PokemonPage> {
       pokemonBreedingTextDto: PokemonBreedingTextDto(
         type: type.name,
         eggCycle: breeding.hatchCounter,
-        eggGroups: eggGroups.map((e) => e.eggGroupName).toList(),
+        eggGroups: eggGroups.map((e) => toTitleCase(e.eggGroupName)).toList(),
       ),
     );
 

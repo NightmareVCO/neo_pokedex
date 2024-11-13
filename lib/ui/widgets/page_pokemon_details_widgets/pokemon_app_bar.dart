@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/ui/shared/components/heart_button.dart';
+import 'package:neo_pokedex/ui/shared/components/home_button.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 
 class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -74,6 +75,9 @@ class _PokemonAppBarState extends State<PokemonAppBar> {
                 ),
               ),
               actions: [
+                HomeIconButton(
+                  color: scrollOffset > 200 ? Colors.black : Colors.white,
+                ),
                 HeartIconButton(
                   color: scrollOffset > 200 ? Colors.black : Colors.white,
                 ),
