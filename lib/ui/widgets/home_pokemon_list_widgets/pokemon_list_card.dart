@@ -89,8 +89,10 @@ class PokemonCard extends StatelessWidget {
                           color: pokemonTypeColorsBg[type],
                           borderRadius: BorderRadius.circular(25),
                         ),
-                        child:
-                            Icon(pokemonTypeIcons[type], color: Colors.white)))
+                        child: getPokemonTypeIcon(type,
+                            size: 20,
+                            color: const ColorFilter.mode(
+                                Colors.white, BlendMode.srcIn))))
                     .toList(),
               ),
             ),

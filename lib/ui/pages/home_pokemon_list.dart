@@ -144,11 +144,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
             child: PokemonList(pokemons: _pokemons),
           ),
         ),
-        const Positioned(
-          top: 40,
-          right: 10,
-          child: PokeballBackground(color: PokeballBackgroundColors.black),
-        ),
         if (_isLoading)
           const Positioned(
             bottom: 10,

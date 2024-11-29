@@ -97,11 +97,10 @@ class PokemonEffectivenessText extends StatelessWidget {
                 color: typeColor,
                 borderRadius: BorderRadius.circular(8.0),
               ),
-              child: Icon(
-                pokemonTypeIcons[type.toLowerCase()]!,
-                color: Colors.white,
-                size: 20,
-              )),
+              child: getPokemonTypeIcon(type.toLowerCase(),
+                  size: 16,
+                  color:
+                      const ColorFilter.mode(Colors.white, BlendMode.srcIn))),
           const Spacer(),
           // Texto del multiplicador
           Text(

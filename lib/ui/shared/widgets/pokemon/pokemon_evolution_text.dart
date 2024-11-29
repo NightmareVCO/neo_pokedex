@@ -149,11 +149,10 @@ class PokemonEvolutionText extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              pokemonTypeIcons[type.toLowerCase()],
-                              color: Colors.white,
-                              size: 16,
-                            ),
+                            getPokemonTypeIcon(type,
+                                size: 12,
+                                color: const ColorFilter.mode(
+                                    Colors.white, BlendMode.srcIn)),
                             const SizedBox(width: 2),
                             Text(
                               type.toUpperCase(),

@@ -82,7 +82,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                     ),
                     onChanged: (value) {
-                      // Handle search logic here
+                      // search logic here
                     },
                   ),
                 ),
@@ -95,7 +95,6 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
             ],
           ),
           const SizedBox(height: 10),
-          // Añadimos las Chips aquí
           Wrap(
             spacing: 8.0,
             children: _buildFilterChips(),
@@ -121,15 +120,15 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
             toTitleCase(widget.type),
             style: const TextStyle(color: Colors.white),
           ),
-          avatar: Icon(
-            pokemonTypeIcons[widget.type],
-            color: Colors.white,
+          avatar: getPokemonTypeIcon(
+            widget.type,
+            size: 20,
+            color: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
           backgroundColor: pokemonTypeColorsBg[widget.type],
           deleteIconColor: Colors.white,
           onDeleted: () {
             widget.onTypeChanged('');
-            // Actualiza la lista de Pokémon filtrada
           },
         ),
       );
@@ -182,10 +181,11 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
         return ListView(
           children: pokemonTypeIcons.keys.map((type) {
             return ListTile(
-              leading: Icon(
-                pokemonTypeIcons[type],
-                color: pokemonTypeColorsBg[type.toLowerCase()],
-              ),
+              leading: getPokemonTypeIcon(type,
+                  size: 24,
+                  color: ColorFilter.mode(
+                      pokemonTypeColorsBg[type.toLowerCase()]!,
+                      BlendMode.srcIn)),
               title: Text(
                 toTitleCase(type),
                 style: TextStyle(
@@ -215,20 +215,18 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           children: [
             ListTile(
               leading: const Icon(Icons.sort_by_alpha),
-              title: const Text('name'), // Changed to lowercase
+              title: const Text('name'),
               onTap: () {
                 Navigator.pop(context, 'name');
               },
             ),
             ListTile(
               leading: const Icon(Icons.format_list_numbered),
-              title:
-                  const Text('id'), // Changed to lowercase and removed 'type'
+              title: const Text('id'),
               onTap: () {
                 Navigator.pop(context, 'id');
               },
             ),
-            // Removed the 'Type' sorting option
           ],
         );
       },

@@ -97,11 +97,10 @@ class PokemonMovesText extends StatelessWidget {
                                   color: moveTypeColor,
                                   borderRadius: BorderRadius.circular(30.0),
                                 ),
-                                child: Icon(
-                                  pokemonTypeIcons[move.moveType.toLowerCase()],
-                                  size: 16,
-                                  color: Colors.white,
-                                )),
+                                child: getPokemonTypeIcon(move.moveType,
+                                    size: 20,
+                                    color: const ColorFilter.mode(
+                                        Colors.white, BlendMode.srcIn))),
                           ),
                           DataCell(Text(move.movePower)),
                           DataCell(Text(move.moveAccuracy)),

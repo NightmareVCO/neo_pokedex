@@ -22,11 +22,10 @@ class PokemonTypes extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        pokemonTypeIcons[type],
-                        color: Colors.white,
-                        size: 20,
-                      ),
+                      getPokemonTypeIcon(type,
+                          size: 20,
+                          color: const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn)),
                       const SizedBox(width: 5),
                       Text(
                         toTitleCase(type),
