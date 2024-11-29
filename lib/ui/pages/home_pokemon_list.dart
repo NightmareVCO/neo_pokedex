@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:neo_pokedex/ui/shared/widgets/pokeball_barkground.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:neo_pokedex/core/services/graph_ql_service.dart';
 import 'package:neo_pokedex/core/models/pokemon.dart' as models;
-import 'package:neo_pokedex/ui/themes/pokeball_background_colors.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list_app_bar.dart';
 

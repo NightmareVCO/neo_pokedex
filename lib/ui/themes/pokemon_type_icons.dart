@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 
 Map<String, String> pokemonTypeIcons = {
   "normal": "assets/icons/normal.svg",

@@ -29,7 +29,9 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<PokemonListAppBar> createState() => _PokemonListAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(185);
+  Size get preferredSize => Size.fromHeight(
+        (!sort.isNotEmpty || !type.isNotEmpty) ? 115.0 : 185.0,
+      );
 }
 
 class _PokemonListAppBarState extends State<PokemonListAppBar> {
