@@ -13,7 +13,7 @@ Map<String, Color> pokemonTypeColors = {
   "fire": Colors.orange,
   "water": Colors.blue,
   "grass": Colors.green[700]!,
-  "electric": Colors.yellow,
+  "electric": const Color.fromARGB(255, 255, 186, 11),
   "psychic": Colors.pink,
   "ice": Colors.cyan,
   "dragon": Colors.redAccent,
