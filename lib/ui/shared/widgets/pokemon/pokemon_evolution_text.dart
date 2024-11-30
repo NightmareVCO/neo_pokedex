@@ -120,7 +120,13 @@ class PokemonEvolutionText extends StatelessWidget {
                 ),
               ),
               Text(
-                'Lv. ${evolution.level}',
+                evolution.level != 'Unknown'
+                    ? 'Lv. ${evolution.level}'
+                    : evolution.item != 'Unknown'
+                        ? 'Item: ${evolution.item}'
+                        : evolution.happiness != 'Unknown'
+                            ? 'Happiness: ${evolution.happiness}'
+                            : 'Unknown',
                 style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,

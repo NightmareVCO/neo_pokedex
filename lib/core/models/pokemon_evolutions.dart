@@ -3,6 +3,9 @@ class Evolution {
   final String id;
   final String? sprite;
   final String level;
+  final String happiness;
+  final String affection;
+  final String item;
   final String trigger;
   final List<String> types;
 
@@ -11,6 +14,9 @@ class Evolution {
     required this.id,
     required this.sprite,
     required this.level,
+    required this.item,
+    required this.happiness,
+    required this.affection,
     required this.trigger,
     required this.types,
   });
@@ -36,8 +42,8 @@ class Evolution {
               json[1]['pokemon_v2_pokemonspecies'][0]
                       ['pokemon_v2_pokemonevolutions']
                   .isNotEmpty)
-          ? json[1]['pokemon_v2_pokemonspecies'][0]['pokemon_v2_pokemonevolutions']
-                      [0]['min_level']
+          ? json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'][0]['min_level']
                   ?.toString() ??
               'Unknown'
           : 'Unknown',
@@ -53,14 +59,59 @@ class Evolution {
                           ['pokemon_v2_pokemonevolutions'][0]
                       ['pokemon_v2_evolutiontrigger'] !=
                   null)
-          ? json[0]['pokemon_v2_pokemonspecies'][0]['pokemon_v2_pokemonevolutions']
-                  [0]['pokemon_v2_evolutiontrigger']['name'] ??
+          ? json[0]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'][0]
+                  ['pokemon_v2_evolutiontrigger']['name'] ??
+              'Unknown'
+          : 'Unknown',
+      item: (json[1]['pokemon_v2_pokemonspecies'] != null &&
+              json[1]['pokemon_v2_pokemonspecies'].isNotEmpty &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'] !=
+                  null &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions']
+                  .isNotEmpty &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'][0]['pokemon_v2_item'] !=
+                  null)
+          ? json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'][0]['pokemon_v2_item']
+                  ['name'] ??
+              'Unknown'
+          : 'Unknown',
+      happiness: (json[1]['pokemon_v2_pokemonspecies'] != null &&
+              json[1]['pokemon_v2_pokemonspecies'].isNotEmpty &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'] !=
+                  null &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions']
+                  .isNotEmpty)
+          ? json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'][0]['min_happiness']
+                  ?.toString() ??
+              'Unknown'
+          : 'Unknown',
+      affection: (json[1]['pokemon_v2_pokemonspecies'] != null &&
+              json[1]['pokemon_v2_pokemonspecies'].isNotEmpty &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'] !=
+                  null &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions']
+                  .isNotEmpty)
+          ? json[1]['pokemon_v2_pokemonspecies'][0]
+                      ['pokemon_v2_pokemonevolutions'][0]['min_affection']
+                  ?.toString() ??
               'Unknown'
           : 'Unknown',
       types: (json[0]['pokemon_v2_pokemons'] != null &&
               json[0]['pokemon_v2_pokemons'].isNotEmpty &&
-              json[0]['pokemon_v2_pokemons'][0]['pokemon_v2_pokemontypes'] != null)
-          ? (json[0]['pokemon_v2_pokemons'][0]['pokemon_v2_pokemontypes'] as List)
+              json[0]['pokemon_v2_pokemons'][0]['pokemon_v2_pokemontypes'] !=
+                  null)
+          ? (json[0]['pokemon_v2_pokemons'][0]['pokemon_v2_pokemontypes']
+                  as List)
               .map((type) => type['pokemon_v2_type']['name'] as String)
               .toList()
           : [],

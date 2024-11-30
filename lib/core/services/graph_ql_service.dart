@@ -289,7 +289,7 @@ class GraphQLService {
       pokemon_v2_pokemon(where: {id: {_eq: \$pokemonId}}) {
         pokemon_v2_pokemonspecy {
           pokemon_v2_evolutionchain {
-            pokemon_v2_pokemonspecies {
+            pokemon_v2_pokemonspecies(order_by: {order: asc}) {
               name
               id
               evolves_from_species_id
@@ -309,6 +309,13 @@ class GraphQLService {
                     name
                   }
                   min_level
+                  min_happiness
+                  min_affection
+                  evolution_item_id
+                  pokemon_v2_item {
+                    id
+                    name
+                  }
                 }
               }
             }
@@ -343,7 +350,15 @@ class GraphQLService {
           'pokemon_v2_pokemonspecies': [
             {
               'pokemon_v2_pokemonevolutions': [
-                {'min_level': 1}
+                {'min_level': 1},
+                {
+                  'pokemon_v2_evolutiontrigger': {'name': 'level-up'}
+                },
+                {
+                  'pokemon_v2_item': {'name': 'Unknown'}
+                },
+                {'min_happiness': 0},
+                {'min_affection': 0}
               ]
             }
           ]
