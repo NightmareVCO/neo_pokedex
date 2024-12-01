@@ -8,9 +8,11 @@ class PokemonEvolutionFormsText extends StatelessWidget {
   const PokemonEvolutionFormsText({
     super.key,
     required this.pokemonEvolutionTextDto,
+    required this.originId,
   });
 
   final List<PokemonEvolutionTextDto> pokemonEvolutionTextDto;
+  final int originId;
 
   @override
   Widget build(BuildContext context) {
@@ -115,11 +117,16 @@ class PokemonEvolutionFormsText extends StatelessWidget {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    '/pokemon_page',
-                    arguments: int.parse(evolution.id),
-                  ),
+                  onTap: () => {
+                    if (originId != int.parse(evolution.id))
+                      {
+                        Navigator.pushNamed(
+                          context,
+                          '/pokemon_page',
+                          arguments: int.parse(evolution.id),
+                        )
+                      }
+                  },
                   child: Image.network(
                     evolution.imageUrl,
                     width: 80,
