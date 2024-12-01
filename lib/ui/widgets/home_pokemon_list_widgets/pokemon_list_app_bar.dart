@@ -30,7 +30,7 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-        (!sort.isNotEmpty || !type.isNotEmpty) ? 115.0 : 185.0,
+        (type.isNotEmpty || orderBy.isNotEmpty) ? 185.0 : 115.0,
       );
 }
 
