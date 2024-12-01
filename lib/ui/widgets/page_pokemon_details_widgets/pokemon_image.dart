@@ -74,10 +74,45 @@ class _PokemonImageState extends State<PokemonImage>
     _controller.forward().then((value) => _controller.reverse());
   }
 
+  void _onHorizontalDragEnd(DragEndDetails details) {
+    const int swipeThreshold = 300;
+
+    if (details.primaryVelocity != null) {
+      if (details.primaryVelocity! < -swipeThreshold) {
+        int nextId = int.parse(widget.id) + 1;
+        Navigator.pushNamed(
+          context,
+          '/pokemon_page',
+          arguments: nextId,
+        );
+      } else if (details.primaryVelocity! > swipeThreshold) {
+        int prevId = int.parse(widget.id) - 1;
+        if (prevId > 0) {
+          Navigator.pushNamed(
+            context,
+            '/pokemon_page',
+            arguments: prevId,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Center(
+                child: Text('No hay Pokémon anterior'),
+              ),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _onTap,
+      onHorizontalDragEnd: _onHorizontalDragEnd,
       child: ScaleTransition(
           scale: _animation,
           child: Hero(

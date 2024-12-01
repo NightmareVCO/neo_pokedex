@@ -4,6 +4,7 @@ import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart'
 import 'package:neo_pokedex/core/models/dto/pokemon_moves_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_stats_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/pokemon_hero.dart';
+import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_image.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_name.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_number.dart';
@@ -29,6 +30,36 @@ class Pokemon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void navigateToNext() {
+      int nextId = int.parse(pokemonHero.id.toString()) + 1;
+      Navigator.pushNamed(
+        context,
+        '/pokemon_page',
+        arguments: nextId,
+      );
+    }
+
+    void navigateToPrevious() {
+      int prevId = int.parse(pokemonHero.id.toString()) - 1;
+      if (prevId > 0) {
+        Navigator.pushNamed(
+          context,
+          '/pokemon_page',
+          arguments: prevId,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Center(
+              child: Text('No hay Pokémon anterior'),
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       child: Column(
@@ -38,10 +69,23 @@ class Pokemon extends StatelessWidget {
               number: pokemonHero.id.toString(), habitat: pokemonHero.habitat),
           PokemonName(name: toTitleCaseWithSpaces(pokemonHero.name)),
           PokemonTypes(types: pokemonHero.types),
-          PokemonImage(
-            cryUrl: pokemonHero.cryUrl,
-            imageUrl: pokemonHero.imageUrl,
-            id: pokemonHero.id.toString(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                  onPressed: navigateToPrevious,
+                  icon: const Icon(Icons.arrow_back_ios),
+                  color: Colors.white),
+              PokemonImage(
+                cryUrl: pokemonHero.cryUrl,
+                imageUrl: pokemonHero.imageUrl,
+                id: pokemonHero.id.toString(),
+              ),
+              IconButton(
+                  onPressed: navigateToNext,
+                  icon: const Icon(Icons.arrow_forward_ios),
+                  color: Colors.white),
+            ],
           ),
           const SizedBox(height: 10),
           PokemonTabsInfo(
