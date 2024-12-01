@@ -1,3 +1,8 @@
+import 'package:neo_pokedex/core/models/pokemon_about_description.dart';
+import 'package:neo_pokedex/core/models/pokemon_breeding.dart';
+import 'package:neo_pokedex/core/models/pokemon_egg_group.dart';
+import 'package:neo_pokedex/utils/text_utils.dart';
+
 class PokemonAboutTabInfoDto {
   final String type;
   final PokemonFlavourTextDto pokemonFlavourTextDto;
@@ -36,6 +41,17 @@ class PokemonFlavourTextDto {
       weight: json['weight'],
     );
   }
+
+  static PokemonFlavourTextDto fromAbout(
+      String type, PokemonAboutDescription about) {
+    return PokemonFlavourTextDto(
+      type: type,
+      about: removeNewLines(about.description),
+      captureRate: about.captureRate.toString(),
+      height: about.height.toString(),
+      weight: about.weight.toString(),
+    );
+  }
 }
 
 class PokemonInformationTextDto {
@@ -65,6 +81,18 @@ class PokemonInformationTextDto {
       isMythical: json['isMythical'],
     );
   }
+
+  static PokemonInformationTextDto fromBreeding(
+      String type, Breeding breeding) {
+    return PokemonInformationTextDto(
+      type: type,
+      baseExperience: breeding.pokemons.first.baseExperience.toString(),
+      growthRate: breeding.growthRate,
+      shape: breeding.shape,
+      isLegendary: breeding.isLegendary ? "Is legendary" : "Is not legendary",
+      isMythical: breeding.isMythical ? "Is mythical" : "Is not mythical",
+    );
+  }
 }
 
 class PokemonBreedingTextDto {
@@ -83,6 +111,15 @@ class PokemonBreedingTextDto {
       type: json['type'],
       eggCycle: json['eggCycle'],
       eggGroups: List<String>.from(json['eggGroups']),
+    );
+  }
+
+  static PokemonBreedingTextDto fromBreeding(
+      String type, Breeding breeding, List<EggGroup> eggGroups) {
+    return PokemonBreedingTextDto(
+      type: type,
+      eggCycle: breeding.hatchCounter,
+      eggGroups: eggGroups.map((e) => toTitleCase(e.eggGroupName)).toList(),
     );
   }
 }
