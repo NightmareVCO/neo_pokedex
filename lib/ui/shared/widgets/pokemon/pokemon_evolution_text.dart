@@ -126,7 +126,9 @@ class PokemonEvolutionText extends StatelessWidget {
                         ? 'Item: ${evolution.item}'
                         : evolution.happiness != 'Unknown'
                             ? 'Happiness: ${evolution.happiness}'
-                            : 'Unknown',
+                            : evolution.trigger != 'Unknown'
+                                ? evolution.trigger
+                                : '',
                 style: const TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,

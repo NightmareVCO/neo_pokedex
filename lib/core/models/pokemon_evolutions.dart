@@ -47,19 +47,19 @@ class Evolution {
                   ?.toString() ??
               'Unknown'
           : 'Unknown',
-      trigger: (json[0]['pokemon_v2_pokemonspecies'] != null &&
-              json[0]['pokemon_v2_pokemonspecies'].isNotEmpty &&
-              json[0]['pokemon_v2_pokemonspecies'][0]
+      trigger: (json[1]['pokemon_v2_pokemonspecies'] != null &&
+              json[1]['pokemon_v2_pokemonspecies'].isNotEmpty &&
+              json[1]['pokemon_v2_pokemonspecies'][0]
                       ['pokemon_v2_pokemonevolutions'] !=
                   null &&
-              json[0]['pokemon_v2_pokemonspecies'][0]
+              json[1]['pokemon_v2_pokemonspecies'][0]
                       ['pokemon_v2_pokemonevolutions']
                   .isNotEmpty &&
-              json[0]['pokemon_v2_pokemonspecies'][0]
+              json[1]['pokemon_v2_pokemonspecies'][0]
                           ['pokemon_v2_pokemonevolutions'][0]
                       ['pokemon_v2_evolutiontrigger'] !=
                   null)
-          ? json[0]['pokemon_v2_pokemonspecies'][0]
+          ? json[1]['pokemon_v2_pokemonspecies'][0]
                       ['pokemon_v2_pokemonevolutions'][0]
                   ['pokemon_v2_evolutiontrigger']['name'] ??
               'Unknown'

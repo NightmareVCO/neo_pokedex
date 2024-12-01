@@ -142,6 +142,14 @@ class GraphQLService {
       throw Exception('No type found for the given Pokemon ID');
     }
 
+    if (result.data!['pokemon_v2_pokemontype'].length > 1 &&
+        result.data!['pokemon_v2_pokemontype'][0]['pokemon_v2_type']['name'] ==
+            'normal') {
+      final dynamic data =
+          result.data!['pokemon_v2_pokemontype'][1]['pokemon_v2_type'];
+      return PokemonType.fromJson(data);
+    }
+
     final dynamic data =
         result.data!['pokemon_v2_pokemontype'][0]['pokemon_v2_type'];
     return PokemonType.fromJson(data);
@@ -394,7 +402,17 @@ class GraphQLService {
             }
             pokemon_v2_pokemonspecy{
               pokemon_v2_pokemonevolutions{
+                pokemon_v2_evolutiontrigger {
+                    name
+                }
                 min_level
+                min_happiness
+                min_affection
+                evolution_item_id
+                pokemon_v2_item {
+                  id
+                  name
+                }
               }
             }
           }
@@ -407,7 +425,7 @@ class GraphQLService {
 
     final QueryOptions options = QueryOptions(
       document: gql(query),
-      variables: {'pokemonId': pokemonId}, // pokemonId es un entero
+      variables: {'pokemonId': pokemonId},
     );
 
     final QueryResult result = await client.query(options);

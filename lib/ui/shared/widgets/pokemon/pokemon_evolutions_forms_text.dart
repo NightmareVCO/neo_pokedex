@@ -30,7 +30,7 @@ class PokemonEvolutionFormsText extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.all(19.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Align(
                 alignment: Alignment.topCenter,
@@ -127,13 +127,19 @@ class PokemonEvolutionFormsText extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                 ),
-                Text(
-                  'Lv. ${evolution.level}',
-                  style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey),
-                ),
+                // Text(
+                //   evolution.level != 'Unknown'
+                //       ? 'Lv. ${evolution.level}'
+                //       : evolution.item != 'Unknown'
+                //           ? 'Item: ${evolution.item}'
+                //           : evolution.happiness != 'Unknown'
+                //               ? 'Happiness: ${evolution.happiness}'
+                //               : 'Unknown',
+                //   style: const TextStyle(
+                //       fontSize: 10,
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.grey),
+                // ),
                 Text(
                   evolution.name,
                   style: TextStyle(
