@@ -429,7 +429,6 @@ class GraphQLService {
 
 // FILTRADO
 
-// filtrado de tipo y order descendente
   Future<List<Pokemon>> getPokemons(
       String orderBy, String orderByDirecction, int limit, int offset,
       [String? type]) async {
@@ -498,4 +497,42 @@ class GraphQLService {
 
     return data.map((json) => Pokemon.fromJson(json)).toList();
   }
+
+  Future<List<Pokemon>> getPokemonsByIds(List<int> ids) async {
+  String query = '''
+    query MyQuery(\$ids: [Int!]) {
+      pokemon_v2_pokemon(where: {id: {_in: \$ids}}) {
+        id
+        name
+        pokemon_v2_pokemontypes {
+          pokemon_v2_type {
+            name
+          }
+        }
+        pokemon_v2_pokemonsprites {
+          sprites(path: "other.official-artwork.front_default")
+        }
+      }
+    }
+  ''';
+
+  final variables = {
+    'ids': ids,
+  };
+
+  final QueryOptions options = QueryOptions(
+    document: gql(query),
+    variables: variables,
+  );
+
+  final QueryResult result = await client.query(options);
+
+  if (result.hasException) {
+    throw Exception(result.exception.toString());
+  }
+
+  final List<dynamic> data = result.data!['pokemon_v2_pokemon'];
+
+  return data.map((json) => Pokemon.fromJson(json)).toList();
+}
 }
