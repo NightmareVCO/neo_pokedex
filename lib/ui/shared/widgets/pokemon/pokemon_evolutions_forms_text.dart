@@ -8,9 +8,11 @@ class PokemonEvolutionFormsText extends StatelessWidget {
   const PokemonEvolutionFormsText({
     super.key,
     required this.pokemonEvolutionTextDto,
+    required this.originId,
   });
 
   final List<PokemonEvolutionTextDto> pokemonEvolutionTextDto;
+  final int originId;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class PokemonEvolutionFormsText extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.all(19.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Align(
                 alignment: Alignment.topCenter,
@@ -115,11 +117,16 @@ class PokemonEvolutionFormsText extends StatelessWidget {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    '/pokemon_page',
-                    arguments: int.parse(evolution.id),
-                  ),
+                  onTap: () => {
+                    if (originId != int.parse(evolution.id))
+                      {
+                        Navigator.pushNamed(
+                          context,
+                          '/pokemon_page',
+                          arguments: int.parse(evolution.id),
+                        )
+                      }
+                  },
                   child: Image.network(
                     evolution.imageUrl,
                     width: 80,
@@ -127,13 +134,19 @@ class PokemonEvolutionFormsText extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                 ),
-                Text(
-                  'Lv. ${evolution.level}',
-                  style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey),
-                ),
+                // Text(
+                //   evolution.level != 'Unknown'
+                //       ? 'Lv. ${evolution.level}'
+                //       : evolution.item != 'Unknown'
+                //           ? 'Item: ${evolution.item}'
+                //           : evolution.happiness != 'Unknown'
+                //               ? 'Happiness: ${evolution.happiness}'
+                //               : 'Unknown',
+                //   style: const TextStyle(
+                //       fontSize: 10,
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.grey),
+                // ),
                 Text(
                   evolution.name,
                   style: TextStyle(

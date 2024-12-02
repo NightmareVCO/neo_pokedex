@@ -4,6 +4,8 @@ import 'package:neo_pokedex/core/services/graph_ql_service.dart';
 import 'package:neo_pokedex/core/models/pokemon.dart' as models;
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list_app_bar.dart';
+import 'package:neo_pokedex/ui/shared/components/favorites_notifier.dart'; // Import the global notifier
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 class PokemonListPage extends StatefulWidget {
   static const String routeName = '/';
@@ -23,14 +25,24 @@ class _PokemonListPageState extends State<PokemonListPage> {
   bool _isLoading = false;
   bool _hasMore = true;
   bool _isInitialized = false;
+  bool _inFavorites = false;
 
   List<Map<String, String>> _orderBy = [];
   String _sort = "desc";
-  String _type = "";
+  String _generation = "";
+  String _powerRange = "";
+  final List<String> _types = [];
 
   @override
   void initState() {
     super.initState();
+    _initializeFavorites();
+  }
+
+  Future<void> _initializeFavorites() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> favorites = prefs.getStringList('favorites') ?? [];
+    favoritesNotifier.value = favorites;
   }
 
   @override
@@ -55,8 +67,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         _sort,
         _limit,
         _offset,
-        //........
-        _type.isNotEmpty ? [_type] : null,
+        _types.isEmpty ? "" : _types.first,
       );
       setState(() {
         _pokemons.addAll(fetchedPokemons);
@@ -105,7 +116,42 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   void _updateType(String newType) {
     setState(() {
-      _type = newType;
+      if (_types.contains(newType)) {
+        _types.remove(newType);
+      } else {
+        _types.add(newType);
+      }
+
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void updateGeneration(String newGeneration) {
+    setState(() {
+      _generation = newGeneration;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void updatePowerRange(String newPowerRange) {
+    setState(() {
+      _powerRange = newPowerRange;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void _updateFavorites(bool inFavorites) {
+    setState(() {
+      _inFavorites = inFavorites;
       _offset = 0;
       _pokemons.clear();
       _hasMore = true;
@@ -124,23 +170,37 @@ class _PokemonListPageState extends State<PokemonListPage> {
             orderBy: _orderBy,
             limit: _limit,
             sort: _sort,
-            type: _type,
+            types: _types,
+            generation: _generation,
+            powerRange: _powerRange,
+            inFavorites: _inFavorites,
+            onFavoritesChanged: _updateFavorites,
             onOrderByChanged: _updateOrderBy,
             onLimitChanged: _updateLimit,
             onSortChanged: _updateSort,
             onTypeChanged: _updateType,
+            onGenerationChanged: updateGeneration,
+            onPowerRangeChanged: updatePowerRange,
           ),
-          body: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (!_isLoading &&
-                  _hasMore &&
-                  scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent) {
-                _fetchPokemons();
-              }
-              return false;
+          body: ValueListenableBuilder<List<String>>(
+            valueListenable: favoritesNotifier,
+            builder: (context, favorites, _) {
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (!_isLoading &&
+                      _hasMore &&
+                      scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                    _fetchPokemons();
+                  }
+                  return false;
+                },
+                child: PokemonList(
+                  pokemons: _pokemons,
+                  favorites: favorites, // Pass favorites to the list
+                ),
+              );
             },
-            child: PokemonList(pokemons: _pokemons),
           ),
         ),
         if (_isLoading)

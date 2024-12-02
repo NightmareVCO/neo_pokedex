@@ -8,9 +8,14 @@ import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
 import 'package:neo_pokedex/utils/text_utils.dart';
 
 class PokemonCard extends StatelessWidget {
-  const PokemonCard({super.key, required this.pokemon});
-
   final Pokemon pokemon;
+  final bool isFavorited; // Add this line
+
+  const PokemonCard({
+    super.key,
+    required this.pokemon,
+    required this.isFavorited, // Modify constructor
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +48,15 @@ class PokemonCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            //like button
-            const Positioned(
-                top: -2, right: 0, child: HeartIconButton(color: Colors.white)),
+            // Like button with favorite status
+            Positioned(
+              top: -2,
+              right: 0,
+              child: HeartIconButton(
+                pokemonRef: pokemon.id.toString(),
+                color: Colors.white,
+              ),
+            ),
             Positioned(
               top: 10,
               left: 15,
