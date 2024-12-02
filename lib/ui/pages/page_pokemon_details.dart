@@ -71,7 +71,6 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 
   Future<Map<String, dynamic>> fetchAllPokemonData(int id) async {
-    final ScreenshotController _screenshotController = ScreenshotController();
     final pokemon = await _graphQLService.getPokemonById(id);
     final type = await _graphQLService.getPokemonTypeById(id);
     final stats = await _graphQLService.getPokemonStatsById(id);
@@ -190,9 +189,12 @@ class _PokemonPageState extends State<PokemonPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
-                  child: Pokemon(
-                    pokemonHero: pokemon,
-                    pokemonDto: pokemonDto,
+                  child: Hero(
+                    tag: pokemon.id,
+                    child: Pokemon(
+                      pokemonHero: pokemon,
+                      pokemonDto: pokemonDto,
+                    ),
                   ),
                 ),
               ],
