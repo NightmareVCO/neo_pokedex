@@ -193,6 +193,7 @@ class GraphQLService {
             name
           }
           pokemon_v2_move {
+            id
             name
             power
             accuracy
@@ -207,7 +208,7 @@ class GraphQLService {
         }
       }
     ''';
-//error en graphql
+
     final QueryOptions options = QueryOptions(
       document: gql(query),
       variables: {'pokemonId': pokemonId},
@@ -497,8 +498,11 @@ class GraphQLService {
         },
         if (searchId != null)
           {
-            'id': {'_eq': searchId}
-          } // Cambiar _ilike a _eq para id
+            'id': {
+              '_regex':
+                  '^$searchId\\d+' // Coincidir con searchId seguido de al menos un dígito
+            }
+          }
       ];
     }
 

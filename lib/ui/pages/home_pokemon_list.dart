@@ -72,7 +72,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         _types,
         _generation,
         _moves,
-        favoritesNotifier.value,
+        _inFavorites == true ? favoritesNotifier.value : [],
       );
       setState(() {
         _pokemons.addAll(fetchedPokemons);
