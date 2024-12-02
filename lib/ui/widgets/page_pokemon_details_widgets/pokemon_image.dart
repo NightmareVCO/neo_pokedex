@@ -114,34 +114,32 @@ class _PokemonImageState extends State<PokemonImage>
       onTap: _onTap,
       onHorizontalDragEnd: _onHorizontalDragEnd,
       child: ScaleTransition(
-          scale: _animation,
-          child: Hero(
-            tag: widget.id,
-            child: Image.network(
-              widget.imageUrl,
-              width: 220,
-              height: 220,
-              fit: BoxFit.cover,
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                }
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            (loadingProgress.expectedTotalBytes ?? 1)
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder:
-                  (BuildContext context, Object error, StackTrace? stackTrace) {
-                return const Center(child: Icon(Icons.error));
-              },
-            ),
-          )),
+        scale: _animation,
+        child: Image.network(
+          widget.imageUrl,
+          width: 220,
+          height: 220,
+          fit: BoxFit.cover,
+          loadingBuilder: (BuildContext context, Widget child,
+              ImageChunkEvent? loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        (loadingProgress.expectedTotalBytes ?? 1)
+                    : null,
+              ),
+            );
+          },
+          errorBuilder:
+              (BuildContext context, Object error, StackTrace? stackTrace) {
+            return const Center(child: Icon(Icons.error));
+          },
+        ),
+      ),
     );
   }
 }

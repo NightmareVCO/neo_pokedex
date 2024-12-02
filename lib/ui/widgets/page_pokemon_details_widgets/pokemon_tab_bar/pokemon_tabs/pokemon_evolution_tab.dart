@@ -23,7 +23,8 @@ class PokemonEvolutionTab extends StatelessWidget {
               originId: originId),
           PokemonEvolutionFormsText(
               pokemonEvolutionTextDto:
-                  pokemonEvolutionTabInfoDto.pokemonMegaEvolutionTextDto)
+                  pokemonEvolutionTabInfoDto.pokemonMegaEvolutionTextDto,
+              originId: originId),
         ],
       ),
     );

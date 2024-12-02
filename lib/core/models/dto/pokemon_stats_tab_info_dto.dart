@@ -1,3 +1,5 @@
+import 'package:neo_pokedex/core/models/pokemon_stats.dart';
+
 class PokemonStatsTabInfoDto {
   final PokemonStatsTextDto pokemonStatsTextDto;
   final PokemonTypeEffectivenessTextDto pokemonTypeEffectivenessTextDto;
@@ -33,6 +35,17 @@ class PokemonStatsTextDto {
       specialAttack: json['specialAttack'],
       specialDefense: json['specialDefense'],
       speed: json['speed'],
+    );
+  }
+
+  static PokemonStatsTextDto fromStats(String type, List<PokemonStats> stats) {
+    return PokemonStatsTextDto(
+      type: type,
+      attack: double.parse(stats[0].statValue),
+      defense: double.parse(stats[1].statValue),
+      specialAttack: double.parse(stats[2].statValue),
+      specialDefense: double.parse(stats[3].statValue),
+      speed: double.parse(stats[4].statValue),
     );
   }
 }

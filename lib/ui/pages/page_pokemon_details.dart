@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:neo_pokedex/core/models/dto/pokemon_dto.dart';
 import 'package:neo_pokedex/core/models/pokemon_hero.dart';
 import 'package:neo_pokedex/core/services/graph_ql_service.dart';
 import 'package:neo_pokedex/ui/shared/widgets/circle_background.dart';
@@ -13,6 +14,7 @@ import 'package:neo_pokedex/core/models/dto/pokemon_about_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_moves_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_stats_tab_info_dto.dart';
+import 'package:screenshot/screenshot.dart';
 
 class PokemonPage extends StatefulWidget {
   static const String routeName = '/pokemon_page';
@@ -25,6 +27,7 @@ class PokemonPage extends StatefulWidget {
 }
 
 class _PokemonPageState extends State<PokemonPage> {
+  final ScreenshotController _screenshotController = ScreenshotController();
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
   final double maxScrollOffset = 320.0;
@@ -79,38 +82,16 @@ class _PokemonPageState extends State<PokemonPage> {
     final about = await _graphQLService.getDescription(id);
 
     final PokemonAboutTabInfoDto aboutDto = PokemonAboutTabInfoDto(
-      type: type.name,
-      pokemonFlavourTextDto: PokemonFlavourTextDto(
         type: type.name,
-        about: removeNewLines(about.description),
-        captureRate: about.captureRate.toString(),
-        height: about.height.toString(),
-        weight: about.weight.toString(),
-      ),
-      pokemonInformationTextDto: PokemonInformationTextDto(
-        type: type.name,
-        baseExperience: breeding.pokemons.first.baseExperience.toString(),
-        growthRate: breeding.growthRate,
-        shape: breeding.shape,
-        isLegendary: breeding.isLegendary ? "Is legendary" : "Is not legendary",
-        isMythical: breeding.isMythical ? "Is mythical" : "Is not mythical",
-      ),
-      pokemonBreedingTextDto: PokemonBreedingTextDto(
-        type: type.name,
-        eggCycle: breeding.hatchCounter,
-        eggGroups: eggGroups.map((e) => toTitleCase(e.eggGroupName)).toList(),
-      ),
-    );
+        pokemonFlavourTextDto:
+            PokemonFlavourTextDto.fromAbout(type.name, about),
+        pokemonInformationTextDto:
+            PokemonInformationTextDto.fromBreeding(type.name, breeding),
+        pokemonBreedingTextDto: PokemonBreedingTextDto.fromBreeding(
+            type.name, breeding, eggGroups));
 
     final PokemonStatsTabInfoDto statsDto = PokemonStatsTabInfoDto(
-      pokemonStatsTextDto: PokemonStatsTextDto(
-        type: type.name,
-        attack: double.parse(stats[0].statValue),
-        defense: double.parse(stats[1].statValue),
-        specialAttack: double.parse(stats[2].statValue),
-        specialDefense: double.parse(stats[3].statValue),
-        speed: double.parse(stats[4].statValue),
-      ),
+      pokemonStatsTextDto: PokemonStatsTextDto.fromStats(type.name, stats),
       pokemonTypeEffectivenessTextDto: PokemonTypeEffectivenessTextDto(
         type: type.name,
       ),
@@ -131,12 +112,16 @@ class _PokemonPageState extends State<PokemonPage> {
           .toList(),
     );
 
+    final PokemonDto pokemonDto = PokemonDto(
+      pokemonAboutTabInfoDto: aboutDto,
+      pokemonStatsTabInfoDto: statsDto,
+      pokemonMovesTabInfoDto: movesDto,
+      pokemonEvolutionTabInfoDto: evolutionsDto,
+    );
+
     return {
       'pokemon': pokemon,
-      'pokemonAboutTabInfoDto': aboutDto,
-      'pokemonStatsTabInfoDto': statsDto,
-      'pokemonMovesTabInfoDto': movesDto,
-      'pokemonEvolutionTabInfoDto': evolutionsDto,
+      'pokemonDto': pokemonDto,
     };
   }
 
@@ -145,10 +130,12 @@ class _PokemonPageState extends State<PokemonPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PokemonAppBar(
+        pokemonId: id.toString(),
         scrollOffsetNotifier: _scrollOffset,
         type: 'unknown',
         imageUrl: '',
         name: '',
+        screenshotController: _screenshotController,
       ),
       body: const Center(child: CircularProgressIndicator()),
     );
@@ -159,10 +146,12 @@ class _PokemonPageState extends State<PokemonPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PokemonAppBar(
+        pokemonId: id.toString(),
         scrollOffsetNotifier: _scrollOffset,
         type: 'unknown',
         imageUrl: '',
         name: '',
+        screenshotController: _screenshotController,
       ),
       body: Center(child: Text('Error: $error')),
     );
@@ -170,42 +159,47 @@ class _PokemonPageState extends State<PokemonPage> {
 
   Widget _buildPokemonDetails(Map<String, dynamic> data) {
     final PokemonHero pokemon = data['pokemon'];
-    final PokemonAboutTabInfoDto aboutDto = data['pokemonAboutTabInfoDto'];
-    final PokemonStatsTabInfoDto statsDto = data['pokemonStatsTabInfoDto'];
-    final PokemonMovesTabInfoDto movesDto = data['pokemonMovesTabInfoDto'];
-    final PokemonEvolutionTabInfoDto evolutionsDto =
-        data['pokemonEvolutionTabInfoDto'];
+    final PokemonDto pokemonDto = data['pokemonDto'];
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PokemonAppBar(
+        pokemonId: id.toString(),
         scrollOffsetNotifier: _scrollOffset,
-        type: evolutionsDto.type,
+        type: pokemonDto.pokemonEvolutionTabInfoDto.type,
         imageUrl: pokemon.imageUrl,
         name: toTitleCaseWithSpaces(pokemon.name),
+        screenshotController: _screenshotController,
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Stack(
-          children: [
-            CircleBackGround(types: pokemon.types),
-            const Positioned(
-              top: 100,
-              right: -100,
-              child: PokeballBackground(color: PokeballBackgroundColors.white),
+      body: Screenshot(
+        controller: _screenshotController,
+        child: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Stack(
+              children: [
+                CircleBackGround(types: pokemon.types),
+                const Positioned(
+                  top: 100,
+                  right: -100,
+                  child:
+                      PokeballBackground(color: PokeballBackgroundColors.white),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
+                  child: Hero(
+                    tag: pokemon.id,
+                    child: Pokemon(
+                      pokemonHero: pokemon,
+                      pokemonDto: pokemonDto,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
-              child: Pokemon(
-                pokemonHero: pokemon,
-                pokemonAboutTabInfoDto: aboutDto,
-                pokemonStatsTabInfoDto: statsDto,
-                pokemonMovesTabInfoDto: movesDto,
-                pokemonEvolutionTabInfoDto: evolutionsDto,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

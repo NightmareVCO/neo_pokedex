@@ -4,8 +4,13 @@ import 'package:neo_pokedex/core/models/pokemon.dart';
 
 class PokemonList extends StatelessWidget {
   final List<Pokemon> pokemons;
+  final List<String> favorites; // Add this line
 
-  const PokemonList({super.key, required this.pokemons});
+  const PokemonList({
+    super.key,
+    required this.pokemons,
+    required this.favorites, // Modify constructor
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +27,11 @@ class PokemonList extends StatelessWidget {
           ),
           itemBuilder: (_, index) {
             final pokemon = pokemons[index];
+            final isFavorited = favorites
+                .contains(pokemon.id.toString()); // Determine favorite status
             return PokemonCard(
               pokemon: pokemon,
+              isFavorited: isFavorited, // Pass favorite status to PokemonCard
             );
           },
         ),

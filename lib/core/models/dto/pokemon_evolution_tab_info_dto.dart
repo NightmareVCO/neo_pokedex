@@ -61,8 +61,13 @@ class PokemonEvolutionTextDto {
   }
 
   static PokemonEvolutionTextDto fromEvolution(Evolution evolution) {
+    //if first type is 'normal' then use the second type
+    var customType = evolution.types.first == 'normal'
+        ? evolution.types.last
+        : evolution.types.first;
+
     return PokemonEvolutionTextDto(
-      type: evolution.types.first,
+      type: customType,
       id: evolution.id,
       text: 'Evolves at level ${evolution.level}',
       trigger: toTitleCaseWithSpaces(evolution.trigger),
@@ -78,8 +83,12 @@ class PokemonEvolutionTextDto {
   }
 
   static PokemonEvolutionTextDto fromMegaEvolution(Mega mega) {
+    //if first type is 'normal' then use the second type
+    var customType =
+        mega.types.first == 'normal' ? mega.types.last : mega.types.first;
+
     return PokemonEvolutionTextDto(
-      type: mega.types.first,
+      type: customType,
       id: mega.id,
       text: 'Mega evolves',
       trigger: '',

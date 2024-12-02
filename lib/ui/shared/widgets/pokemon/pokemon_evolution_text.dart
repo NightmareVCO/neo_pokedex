@@ -15,7 +15,8 @@ class PokemonEvolutionText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String type = pokemonEvolutionTextDto.first.type;
+    //if have more than 1 type and the first type is normal, then use the second type
+    final type = pokemonEvolutionTextDto.first.type;
 
     return Card(
       color: Colors.white,
@@ -27,7 +28,7 @@ class PokemonEvolutionText extends StatelessWidget {
       child: Padding(
           padding: const EdgeInsets.all(19.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Align(
                 alignment: Alignment.topCenter,
