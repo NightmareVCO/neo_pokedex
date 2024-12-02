@@ -59,8 +59,6 @@ class _PokemonListPageState extends State<PokemonListPage> {
     }
   }
 
-  //future to get all pokemon moves
-
   Future<void> _fetchPokemons() async {
     if (_isLoading || !_hasMore) return;
     setState(() {
