@@ -58,7 +58,7 @@ class PokemonEvolutionFormsText extends StatelessWidget {
                       'Evolution Forms',
                       style: TextStyle(
                         color: pokemonTypeColors[type],
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -150,7 +150,7 @@ class PokemonEvolutionFormsText extends StatelessWidget {
                 Text(
                   evolution.name,
                   style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: pokemonTypeColors[evolution.types.first]),
                 ),
@@ -178,7 +178,7 @@ class PokemonEvolutionFormsText extends StatelessWidget {
                               Text(
                                 type.toUpperCase(),
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   color: Colors.white,
                                 ),
                               ),

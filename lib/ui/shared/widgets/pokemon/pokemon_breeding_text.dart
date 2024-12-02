@@ -48,7 +48,7 @@ class PokemonBreedingText extends StatelessWidget {
                       style: TextStyle(
                         color: pokemonTypeColors[
                             pokemonBreedingTextDto.type], // Text color
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -69,7 +69,7 @@ class PokemonBreedingText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonBreedingTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -80,7 +80,7 @@ class PokemonBreedingText extends StatelessWidget {
                             pokemonBreedingTextDto.eggGroups.join(', '),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),
@@ -100,7 +100,7 @@ class PokemonBreedingText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonBreedingTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -111,7 +111,7 @@ class PokemonBreedingText extends StatelessWidget {
                             '${pokemonBreedingTextDto.eggCycle} cycles - (${pokemonBreedingTextDto.eggCycle * 257}) steps',
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),

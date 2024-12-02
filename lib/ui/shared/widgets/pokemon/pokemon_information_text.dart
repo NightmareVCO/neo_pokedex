@@ -51,7 +51,7 @@ class PokemonInformationText extends StatelessWidget {
                       style: TextStyle(
                         color: pokemonTypeColors[
                             pokemonInformationTextDto.type], // Text color
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -72,7 +72,7 @@ class PokemonInformationText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonInformationTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -83,7 +83,7 @@ class PokemonInformationText extends StatelessWidget {
                             pokemonInformationTextDto.baseExperience,
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),
@@ -103,7 +103,7 @@ class PokemonInformationText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonInformationTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -115,7 +115,7 @@ class PokemonInformationText extends StatelessWidget {
                                 pokemonInformationTextDto.growthRate),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),
@@ -135,7 +135,7 @@ class PokemonInformationText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonInformationTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -146,7 +146,7 @@ class PokemonInformationText extends StatelessWidget {
                             toTitleCase(pokemonInformationTextDto.shape),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),
@@ -166,7 +166,7 @@ class PokemonInformationText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonInformationTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -177,7 +177,7 @@ class PokemonInformationText extends StatelessWidget {
                             pokemonInformationTextDto.isLegendary,
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),
@@ -197,7 +197,7 @@ class PokemonInformationText extends StatelessWidget {
                             style: TextStyle(
                               color: pokemonTypeColors[
                                   pokemonInformationTextDto.type],
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -208,7 +208,7 @@ class PokemonInformationText extends StatelessWidget {
                             pokemonInformationTextDto.isMythical,
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 16,
                             ),
                             textAlign: TextAlign.start,
                           ),

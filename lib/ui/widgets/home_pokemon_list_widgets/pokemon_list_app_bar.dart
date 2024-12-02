@@ -84,7 +84,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                   Text(
                     'Gotta catch \'em all!',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.w400,
                       color: Colors.grey,
                     ),

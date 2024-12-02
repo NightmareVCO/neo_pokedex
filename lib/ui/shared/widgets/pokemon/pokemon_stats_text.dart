@@ -61,7 +61,7 @@ class PokemonStatsText extends StatelessWidget {
                       style: TextStyle(
                         color: pokemonTypeColors[
                             pokemonStatsTextDto.type], // Text color
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -96,7 +96,7 @@ class StatsBuilder {
           label,
           style: TextStyle(
             color: pokemonTypeColors[type],
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -121,7 +121,7 @@ class StatsBuilder {
             Text(
               value.toString(),
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),

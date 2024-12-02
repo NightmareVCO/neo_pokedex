@@ -46,7 +46,7 @@ class PokemonFlavourText extends StatelessWidget {
                     'Description',
                     style: TextStyle(
                       color: pokemonTypeColors[pokemonFlavourTextDto.type],
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -58,7 +58,7 @@ class PokemonFlavourText extends StatelessWidget {
               pokemonFlavourTextDto.about,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 16,
               ),
             ),
             const SizedBox(height: 20),
@@ -73,7 +73,7 @@ class PokemonFlavourText extends StatelessWidget {
                     Text(
                       '${pokemonFlavourTextDto.height} m',
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                     ),
                   ],

@@ -65,7 +65,7 @@ class PokemonCard extends StatelessWidget {
                 style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15),
+                    fontSize: 16),
               ),
             ),
             Positioned(
@@ -99,6 +99,14 @@ class PokemonCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: pokemonTypeColorsBg[type],
                           borderRadius: BorderRadius.circular(25),
+                          boxShadow: [
+                            BoxShadow(
+                              color:
+                                  pokemonTypeColorsBg[type]!.withOpacity(0.5),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: getPokemonTypeIcon(type,
                             size: 20,

@@ -25,7 +25,7 @@ class PokemonEffectivenessText extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,10 +50,10 @@ class PokemonEffectivenessText extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Type Effectiveness',
+                    'Type Effects',
                     style: TextStyle(
                       color: pokemonTypeColorsBg[type], // Text color
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -106,7 +106,7 @@ class PokemonEffectivenessText extends StatelessWidget {
           Text(
             'x$multiplier',
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),

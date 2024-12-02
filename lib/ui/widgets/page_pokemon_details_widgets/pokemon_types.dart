@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
+import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
 import 'package:neo_pokedex/utils/text_utils.dart';
 
@@ -20,6 +21,13 @@ class PokemonTypes extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: pokemonTypeColors[type] ?? Colors.grey,
                     borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: pokemonTypeColorsBg[type]!.withOpacity(0.5),
+                        blurRadius: 4,
+                        offset: const Offset(2, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
@@ -32,7 +40,7 @@ class PokemonTypes extends StatelessWidget {
                         toTitleCase(type),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 15,
+                          fontSize: 16,
                         ),
                       ),
                     ],

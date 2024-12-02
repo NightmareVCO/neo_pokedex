@@ -53,7 +53,7 @@ class PokemonMovesText extends StatelessWidget {
                       'Moves',
                       style: TextStyle(
                         color: pokemonTypeColors[type],
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
