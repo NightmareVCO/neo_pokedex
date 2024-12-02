@@ -6,15 +6,17 @@ import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_
 import 'package:neo_pokedex/utils/text_utils.dart';
 
 class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final String orderBy;
+  final List<Map<String, String>> orderBy;
   final int limit;
   final String sort;
   final List<String> types;
+  final String search;
   final String generation;
   final String powerRange;
   final bool inFavorites;
+  final ValueChanged<String> onSearchChanged;
   final ValueChanged<bool> onFavoritesChanged;
-  final ValueChanged<String> onOrderByChanged;
+  final ValueChanged<List<Map<String, String>>> onOrderByChanged;
   final ValueChanged<String> onGenerationChanged;
   final ValueChanged<String> onPowerRangeChanged;
   final ValueChanged<int> onLimitChanged;
@@ -27,9 +29,11 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.limit,
     required this.sort,
     required this.types,
+    required this.search,
     required this.generation,
     required this.powerRange,
     required this.inFavorites,
+    required this.onSearchChanged,
     required this.onFavoritesChanged,
     required this.onOrderByChanged,
     required this.onGenerationChanged,
@@ -123,7 +127,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                       contentPadding: EdgeInsets.symmetric(vertical: 10),
                     ),
                     onChanged: (value) {
-                      // search logic here
+                      widget.onSearchChanged(value);
                     },
                   ),
                 ),
@@ -183,15 +187,14 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
       String sortLabel = '';
       IconData sortIcon = Icons.sort;
 
-      switch (widget.orderBy) {
-        case 'name':
+      for (var order in widget.orderBy) {
+        if (order['value'] == 'name') {
           sortLabel = 'Name';
           sortIcon = Icons.sort_by_alpha;
-          break;
-        case 'id':
+        } else if (order['value'] == 'id') {
           sortLabel = 'ID';
           sortIcon = Icons.format_list_numbered;
-          break;
+        }
       }
 
       chips.add(
@@ -210,7 +213,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           backgroundColor: Colors.amber,
           deleteIconColor: Colors.white,
           onDeleted: () {
-            widget.onOrderByChanged('');
+            widget.onOrderByChanged([]);
           },
         ),
       );
@@ -462,7 +465,9 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
     );
 
     if (selectedOption != null) {
-      widget.onOrderByChanged(selectedOption);
+      widget.onOrderByChanged([
+        {selectedOption: 'asc'}
+      ]);
     }
   }
 }

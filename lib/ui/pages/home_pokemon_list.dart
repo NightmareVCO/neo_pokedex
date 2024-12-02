@@ -28,9 +28,11 @@ class _PokemonListPageState extends State<PokemonListPage> {
   bool _inFavorites = false;
 
   List<Map<String, String>> _orderBy = [];
-  String _sort = "desc";
+  String _sort = "";
   String _generation = "";
   String _powerRange = "";
+  String _search = "";
+  String _moves = "";
   final List<String> _types = [];
 
   @override
@@ -64,10 +66,13 @@ class _PokemonListPageState extends State<PokemonListPage> {
     try {
       List<models.Pokemon> fetchedPokemons = await _graphQLService.getPokemons(
         _orderBy,
-        _sort,
         _limit,
         _offset,
-        _types.isEmpty ? "" : _types.first,
+        _search,
+        _types,
+        _generation,
+        _moves,
+        favoritesNotifier.value,
       );
       setState(() {
         _pokemons.addAll(fetchedPokemons);
@@ -159,6 +164,26 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _fetchPokemons();
   }
 
+  void _searchPokemon(String search) {
+    setState(() {
+      _search = search;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void _updateMoves(String moves) {
+    setState(() {
+      _moves = moves;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -171,9 +196,11 @@ class _PokemonListPageState extends State<PokemonListPage> {
             limit: _limit,
             sort: _sort,
             types: _types,
+            search: _search,
             generation: _generation,
             powerRange: _powerRange,
             inFavorites: _inFavorites,
+            onSearchChanged: _searchPokemon,
             onFavoritesChanged: _updateFavorites,
             onOrderByChanged: _updateOrderBy,
             onLimitChanged: _updateLimit,
