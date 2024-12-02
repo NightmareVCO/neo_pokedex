@@ -430,8 +430,8 @@ class GraphQLService {
 // FILTRADO
 
   Future<List<Pokemon>> getPokemons(
-      String orderBy, String orderByDirecction, int limit, int offset,
-      [String? type]) async {
+      List<Map<String, String>> orderBy, String orderByDirecction, int limit, int offset,
+      [String? search, List<String>? types, String? generation]) async {
     String query = '''
       query MyQuery(\$where: pokemon_v2_pokemon_bool_exp, \$limit: Int, \$offset: Int, \$order: [pokemon_v2_pokemon_order_by!]) {
         pokemon_v2_pokemon(
@@ -442,6 +442,11 @@ class GraphQLService {
         ) {
           id
           name
+          pokemon_v2_pokemonspecy{
+            pokemon_v2_generation{
+              name
+            }
+          }
           pokemon_v2_pokemontypes {
             pokemon_v2_type {
               name
@@ -456,26 +461,37 @@ class GraphQLService {
     // si el filtro esta vacio se debe retornar todos los pokemones
     final where = <String, dynamic>{};
 
-    if (type != null && type.isNotEmpty) {
+     if (search != null && search.isNotEmpty) {
+    where['_or'] = [
+      {'name': {'_ilike': '%$search%'}},
+      {'id': {'_ilike': '%$search%'}}
+    ];
+  }
+
+    if (types != null && types.isNotEmpty) {
       where['pokemon_v2_pokemontypes'] = {
         'pokemon_v2_type': {
-          'name': {'_eq': type}
+          'name': {'_in': types}
+        }
+      };
+    }
+    if(generation != null && generation.isNotEmpty){
+      where['pokemon_v2_pokemonspecy'] = {
+        'pokemon_v2_generation': {
+          'name': {'_eq': generation}
         }
       };
     }
 
     final order = <Map<String, dynamic>>[];
-    if (orderBy.isNotEmpty) {
-      if (orderBy == 'name') {
-        orderByDirecction = 'asc';
-      }
-
-      if (orderBy == 'id') {
-        orderByDirecction = 'asc';
-      }
-
-      order.add({orderBy: orderByDirecction});
+  for (var criterion in orderBy) {
+    var field = criterion.keys.first;
+    var direction = criterion.values.first;
+    if (direction != 'asc' && direction != 'desc') {
+      direction = 'asc'; // Establecer 'asc' por defecto si la dirección no es válida
     }
+    order.add({field: direction});
+  }
 
     final QueryOptions options = QueryOptions(
       document: gql(query),
