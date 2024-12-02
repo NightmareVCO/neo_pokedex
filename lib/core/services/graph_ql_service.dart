@@ -579,11 +579,11 @@ class GraphQLService {
     return data.map((json) => Pokemon.fromJson(json)).toList();
   }
 
-  Future<List<PokemonMove>> fetchAllMovesPokemons(
+  Future<List<PokmenonGenericMove>> fetchAllMovesPokemons(
       {int limit = 10, int offset = 10}) async {
     const String query = '''
     query GetAllMoves(\$limit: Int, \$offset: Int) {
-      pokemon_v2_move(limit: \$limit, offset: \$offset) {
+      pokemon_v2_move(limit: \$limit, offset: \$offset, order_by: {name: asc}) {
         id
         name
       }
@@ -605,6 +605,12 @@ class GraphQLService {
     }
 
     final List<dynamic> data = result.data!['pokemon_v2_move'];
-    return data.map((json) => PokemonMove.fromJson(json)).toList();
+    final moves =
+        data.map((json) => PokmenonGenericMove.fromJson(json)).toList();
+
+    final uniqueMoves = moves.toSet().toList();
+    final uniqueMovesByName =
+        {for (var move in uniqueMoves) move.name: move}.values.toList();
+    return uniqueMovesByName;
   }
 }

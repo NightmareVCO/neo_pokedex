@@ -4,6 +4,9 @@ import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_icons.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_tab_bar/pokemon_tab_bar_render.dart';
 import 'package:neo_pokedex/utils/text_utils.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:neo_pokedex/core/services/graph_ql_service.dart';
+import 'package:neo_pokedex/core/models/pokemon_moves.dart';
 
 class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
   final List<Map<String, String>> orderBy;
@@ -13,8 +16,10 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String search;
   final String generation;
   final String powerRange;
+  final String move;
   final bool inFavorites;
   final ValueChanged<String> onSearchChanged;
+  final ValueChanged<String> onMoveChanged;
   final ValueChanged<bool> onFavoritesChanged;
   final ValueChanged<List<Map<String, String>>> onOrderByChanged;
   final ValueChanged<String> onGenerationChanged;
@@ -32,8 +37,10 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.search,
     required this.generation,
     required this.powerRange,
+    required this.move,
     required this.inFavorites,
     required this.onSearchChanged,
+    required this.onMoveChanged,
     required this.onFavoritesChanged,
     required this.onOrderByChanged,
     required this.onGenerationChanged,
@@ -51,13 +58,23 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
         (types.isNotEmpty ||
                 orderBy.isNotEmpty ||
                 generation.isNotEmpty ||
-                powerRange.isNotEmpty)
+                powerRange.isNotEmpty ||
+                move.isNotEmpty)
             ? 185.0
             : 115.0,
       );
 }
 
 class _PokemonListAppBarState extends State<PokemonListAppBar> {
+  late final GraphQLService _graphQLService;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final client = GraphQLProvider.of(context).value;
+    _graphQLService = GraphQLService(client);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -243,6 +260,29 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
       chips.add(const SizedBox(width: 8));
     }
 
+    //add a chip for the selected move (is only 1 move at the same time)
+    if (widget.move.isNotEmpty) {
+      var customName = toTitleCaseWithSpaces(widget.move);
+      chips.add(
+        Chip(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          side: const BorderSide(
+            color: Colors.transparent,
+          ),
+          label: Text('Move: $customName',
+              style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.green,
+          deleteIconColor: Colors.white,
+          onDeleted: () {
+            widget.onMoveChanged('');
+          },
+        ),
+      );
+      chips.add(const SizedBox(width: 8));
+    }
+
     // add a chip for power range
     if (widget.powerRange.isNotEmpty) {
       final List<String> range = widget.powerRange.split('_');
@@ -254,7 +294,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           side: const BorderSide(
             color: Colors.transparent,
           ),
-          label: Text('Power (${range[1]} - ${range[2]})',
+          label: Text('Power: (${range[1]} - ${range[2]})',
               style: const TextStyle(color: Colors.white)),
           backgroundColor: Colors.green,
           deleteIconColor: Colors.white,
@@ -273,41 +313,78 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
     List<String> selectedTypes = List.from(widget.types);
     String? selectedGeneration =
         widget.generation.isNotEmpty ? widget.generation : null;
-    String? selectedPowerRange =
-        widget.powerRange.isNotEmpty ? widget.powerRange : null;
+    // String? selectedPowerRange =
+    //     widget.powerRange.isNotEmpty ? widget.powerRange : null;
+    String? selectedMove = widget.move.isNotEmpty ? widget.move : null;
 
     final bool? apply = await showModalBottomSheet<bool>(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
+        // Move move-related state variables here
+        List<PokmenonGenericMove> allMoves = [];
+        bool isFetchingMoves = false;
+        int moveOffset = 0;
+        const int moveLimit = 20;
+        bool hasMoreMoves = true;
+
+        void fetchMoreMoves(void Function(void Function()) setState) async {
+          setState(() {
+            isFetchingMoves = true;
+          });
+          try {
+            final moves = await _graphQLService.fetchAllMovesPokemons(
+              limit: moveLimit,
+              offset: moveOffset,
+            );
+            setState(() {
+              allMoves.addAll(moves);
+              moveOffset += moveLimit;
+              if (moves.length < moveLimit) {
+                hasMoreMoves = false;
+              }
+              isFetchingMoves = false;
+            });
+          } catch (e) {
+            setState(() {
+              isFetchingMoves = false;
+            });
+          }
+        }
+
         return StatefulBuilder(
           builder: (context, setState) {
             return DefaultTabController(
               length: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.8,
                 child: Column(
                   children: [
-                    TabBar(
-                        labelColor: Colors.white,
-                        dividerColor: Colors.transparent,
-                        splashFactory: NoSplash.splashFactory,
-                        labelStyle: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                        unselectedLabelColor: pokemonTypeColors['dragon'],
-                        unselectedLabelStyle: const TextStyle(fontSize: 16),
-                        indicatorColor: pokemonTypeColors['dragon'],
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        indicatorPadding: const EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 8),
-                        indicator: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(20),
-                          color: pokemonTypeColors['dragon'],
-                        ),
-                        tabs: PokemonTabBarRender(
-                          tabs: ["Types", "Gens", "Power"],
-                          type: "dragon",
-                        ).renderTabs()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      child: TabBar(
+                          labelColor: Colors.white,
+                          dividerColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                          labelStyle: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                          unselectedLabelColor: pokemonTypeColors['dragon'],
+                          unselectedLabelStyle: const TextStyle(fontSize: 16),
+                          indicatorColor: pokemonTypeColors['dragon'],
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          indicatorPadding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 8),
+                          indicator: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(20),
+                            color: pokemonTypeColors['dragon'],
+                          ),
+                          tabs: PokemonTabBarRender(
+                            tabs: ["Types", "Gens", "Moves"],
+                            type: "dragon",
+                          ).renderTabs()),
+                    ),
                     Expanded(
                       child: TabBarView(
                         children: [
@@ -368,40 +445,84 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                               );
                             }),
                           ),
-                          // Power Ranges Tab
-                          ListView(
-                            children: List.generate(8, (index) {
-                              final start = 50 + index * 20;
-                              final end = start + 20;
-                              String range = 'power_${start}_$end';
-                              bool isSelected = selectedPowerRange == range;
-                              return ListTile(
-                                title: Text('Poder ($start - $end)'),
-                                trailing: isSelected
-                                    ? const Icon(Icons.check,
-                                        color: Colors.green)
-                                    : null,
-                                onTap: () {
-                                  setState(() {
-                                    selectedPowerRange =
-                                        isSelected ? null : range;
-                                  });
+                          // Moves Tab
+                          Builder(
+                            builder: (context) {
+                              if (allMoves.isEmpty && !isFetchingMoves) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  fetchMoreMoves(setState);
+                                });
+                              }
+                              return NotificationListener<ScrollNotification>(
+                                onNotification:
+                                    (ScrollNotification scrollInfo) {
+                                  if (!isFetchingMoves &&
+                                      hasMoreMoves &&
+                                      scrollInfo.metrics.pixels ==
+                                          scrollInfo.metrics.maxScrollExtent) {
+                                    fetchMoreMoves(setState);
+                                  }
+                                  return false;
                                 },
+                                child: ListView.builder(
+                                  itemCount: allMoves.length + 1,
+                                  itemBuilder: (context, index) {
+                                    if (index == allMoves.length) {
+                                      if (hasMoreMoves) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: CircularProgressIndicator(
+                                                color: pokemonTypeColors[
+                                                    'dragon']),
+                                          ),
+                                        );
+                                      } else {
+                                        return const SizedBox.shrink();
+                                      }
+                                    }
+                                    final move = allMoves[index];
+                                    bool isSelected = selectedMove == move.name;
+                                    return ListTile(
+                                      title: Text(
+                                          toTitleCaseWithSpaces(move.name)),
+                                      trailing: isSelected
+                                          ? const Icon(Icons.check,
+                                              color: Colors.green)
+                                          : null,
+                                      onTap: () {
+                                        setState(() {
+                                          selectedMove =
+                                              isSelected ? null : move.name;
+                                        });
+                                      },
+                                    );
+                                  },
+                                ),
                               );
-                            }),
+                            },
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context, true);
-                        },
-                        child: Text('Apply',
-                            style:
-                                TextStyle(color: pokemonTypeColors['dragon'])),
+                      padding: const EdgeInsets.only(
+                          bottom: 30, left: 20, right: 20, top: 10),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: pokemonTypeColors['dragon'],
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                          },
+                          child: const Text(
+                            'Apply',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -435,10 +556,16 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
         widget.onGenerationChanged(selectedGeneration!);
       }
 
-      if (selectedPowerRange != null &&
-          selectedPowerRange != widget.powerRange) {
-        widget.onPowerRangeChanged(selectedPowerRange!);
+      if (selectedMove != null && selectedMove != widget.move) {
+        widget.onMoveChanged(selectedMove!);
+      } else if (selectedMove == null && widget.move.isNotEmpty) {
+        widget.onMoveChanged('');
       }
+
+      // if (selectedPowerRange != null &&
+      //     selectedPowerRange != widget.powerRange) {
+      //   widget.onPowerRangeChanged(selectedPowerRange!);
+      // }
     }
   }
 

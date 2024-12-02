@@ -128,32 +128,35 @@ class _PokemonPageState extends State<PokemonPage> {
 
   Widget _buildLoadingState() {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
-      appBar: PokemonAppBar(
-        pokemonId: id.toString(),
-        scrollOffsetNotifier: _scrollOffset,
-        type: 'unknown',
-        imageUrl: '',
-        name: '',
-        screenshotController: _screenshotController,
-      ),
-      body: const Center(
-          child: Stack(
-        children: [
-          Positioned(child: CircleBackGround(types: ['dragon'])),
-          Positioned(
-            top: 170,
-            right: 65,
-            child: PokeballBackground(color: PokeballBackgroundColors.white),
-          ),
-          Positioned(
-              top: 285,
-              right: 180,
-              child: CircularProgressIndicator(color: Colors.white)),
-        ],
-      )),
-    );
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
+        appBar: PokemonAppBar(
+          pokemonId: id.toString(),
+          scrollOffsetNotifier: _scrollOffset,
+          type: 'unknown',
+          imageUrl: '',
+          name: '',
+          screenshotController: _screenshotController,
+        ),
+        body: Center(
+            child:
+                CircularProgressIndicator(color: pokemonTypeColors['dragon']))
+        //  Stack(
+        //   children: [
+        //     // Positioned(child: CircleBackGround(types: ['dragon'])),
+        //     // Positioned(
+        //     //   top: 170,
+        //     //   right: 65,
+        //     //   child: PokeballBackground(color: PokeballBackgroundColors.white),
+        //     // ),
+        //     Positioned(
+        //         top: 285,
+        //         right: 180,
+        //         child: CircularProgressIndicator(
+        //             color: pokemonTypeColors['dragon'])),
+        //   ],
+        // )),
+        );
   }
 
   Widget _buildErrorState(Object error) {

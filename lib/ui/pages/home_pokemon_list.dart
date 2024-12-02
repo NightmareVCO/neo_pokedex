@@ -33,7 +33,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   String _generation = "";
   String _powerRange = "";
   String _search = "";
-  String _moves = "";
+  String _move = "";
   final List<String> _types = [];
 
   @override
@@ -59,6 +59,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
     }
   }
 
+  //future to get all pokemon moves
+
   Future<void> _fetchPokemons() async {
     if (_isLoading || !_hasMore) return;
     setState(() {
@@ -72,7 +74,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         _search,
         _types,
         _generation,
-        _moves,
+        _move,
         _inFavorites == true ? favoritesNotifier.value : [],
       );
       setState(() {
@@ -175,9 +177,9 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _fetchPokemons();
   }
 
-  void _updateMoves(String moves) {
+  void _updateMove(String move) {
     setState(() {
-      _moves = moves;
+      _move = move;
       _offset = 0;
       _pokemons.clear();
       _hasMore = true;
@@ -200,8 +202,10 @@ class _PokemonListPageState extends State<PokemonListPage> {
             search: _search,
             generation: _generation,
             powerRange: _powerRange,
+            move: _move,
             inFavorites: _inFavorites,
             onSearchChanged: _searchPokemon,
+            onMoveChanged: _updateMove,
             onFavoritesChanged: _updateFavorites,
             onOrderByChanged: _updateOrderBy,
             onLimitChanged: _updateLimit,

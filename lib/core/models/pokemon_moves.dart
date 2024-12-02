@@ -29,6 +29,32 @@ class PokemonMove {
   }
 }
 
+class PokmenonGenericMove {
+  final int id;
+  final String name;
+
+  PokmenonGenericMove({required this.id, required this.name});
+
+  factory PokmenonGenericMove.fromJson(Map<String, dynamic> json) {
+    return PokmenonGenericMove(
+      id: json['id'],
+      name: json['name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'PokmenonGenericMove(id: $id, name: $name)';
+  }
+}
+
 class MoveLearnMethod {
   final String name;
 
