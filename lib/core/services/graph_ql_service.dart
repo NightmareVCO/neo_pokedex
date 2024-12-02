@@ -480,7 +480,7 @@ class GraphQLService {
             name
           }
         }
-        pokemon_v2_pokemontypes {
+        pokemon_v2_pokemontypes (order_by: {pokemon_v2_type: {name: asc}}) {
           pokemon_v2_type {
             name
           }
@@ -511,7 +511,14 @@ class GraphQLService {
             'id': {
               '_in': [searchId, searchId * 10, searchId * 100, searchId * 1000]
             }
+          },
+        {
+          'pokemon_v2_pokemontypes': {
+            'pokemon_v2_type': {
+              'name': {'_ilike': '%$search%'}
+            }
           }
+        }
       ];
     }
 
@@ -547,10 +554,17 @@ class GraphQLService {
       var field = criterion.keys.first;
       var direction = criterion.values.first;
       if (direction != 'asc' && direction != 'desc') {
-        direction =
-            'asc'; // Establecer 'asc' por defecto si la dirección no es válida
+        direction = 'asc'; // Valor por defecto si la dirección no es válida
       }
-      order.add({field: direction});
+      if (field == 'type') {
+        order.add({
+          'pokemon_v2_pokemontypes_aggregate': {
+            'min': {'type_id': direction}
+          }
+        });
+      } else {
+        order.add({field: direction});
+      }
     }
 
     final QueryOptions options = QueryOptions(

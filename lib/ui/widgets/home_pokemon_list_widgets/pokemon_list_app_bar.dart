@@ -212,6 +212,9 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
         } else if (order['id'] == 'asc' || order['id'] == 'desc') {
           sortLabel = 'ID';
           sortIcon = Icons.format_list_numbered;
+        } else if (order['type'] == 'asc' || order['type'] == 'desc') {
+          sortLabel = 'Type';
+          sortIcon = Icons.category;
         }
       }
 
@@ -587,10 +590,9 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           builder: (context, setState) {
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(16.0), // Opcional: Añade padding
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  mainAxisSize:
-                      MainAxisSize.max, // Ajusta el tamaño al contenido
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     const ListTile(
                       title: Text(
@@ -628,54 +630,83 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                         Navigator.pop(context, 'id');
                       },
                     ),
+                    ListTile(
+                      leading: const Icon(Icons.category),
+                      title: const Text('Type'),
+                      trailing: currentSortOption == 'type'
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: () {
+                        setState(() {
+                          currentSortOption = 'type';
+                        });
+                        Navigator.pop(context, 'type');
+                      },
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              isAscending = true;
-                              // also update the sort order
-                              widget.onOrderByChanged([
-                                {currentSortOption!: 'asc'}
-                              ]);
-                            });
-                          },
+                          onPressed: currentSortOption == null
+                              ? null
+                              : () {
+                                  setState(() {
+                                    isAscending = true;
+                                    widget.onOrderByChanged([
+                                      {currentSortOption!: 'asc'}
+                                    ]);
+                                  });
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isAscending
                                 ? pokemonTypeColors['dragon']
                                 : Colors.white,
+                            // Añadir color cuando está deshabilitado
+                            disabledBackgroundColor: Colors.grey[300],
                           ),
-                          child: Text('Ascending',
-                              style: TextStyle(
-                                  color: isAscending
+                          child: Text(
+                            'Ascending',
+                            style: TextStyle(
+                              color: currentSortOption == null
+                                  ? Colors.grey[600]
+                                  : (isAscending
                                       ? Colors.white
-                                      : pokemonTypeColors['dragon'])),
+                                      : pokemonTypeColors['dragon']),
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 16),
                         ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              isAscending = false;
-                              // also update the sort order
-                              widget.onOrderByChanged([
-                                {currentSortOption!: 'desc'}
-                              ]);
-                            });
-                          },
+                          onPressed: currentSortOption == null
+                              ? null
+                              : () {
+                                  setState(() {
+                                    isAscending = false;
+                                    widget.onOrderByChanged([
+                                      {currentSortOption!: 'desc'}
+                                    ]);
+                                  });
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: !isAscending
                                 ? pokemonTypeColors['dragon']
                                 : Colors.white,
+                            // Añadir color cuando está deshabilitado
+                            disabledBackgroundColor: Colors.grey[300],
                           ),
-                          child: Text('Descending',
-                              style: TextStyle(
-                                  color: !isAscending
+                          child: Text(
+                            'Descending',
+                            style: TextStyle(
+                              color: currentSortOption == null
+                                  ? Colors.grey[600]
+                                  : (!isAscending
                                       ? Colors.white
-                                      : pokemonTypeColors['dragon'])),
+                                      : pokemonTypeColors['dragon']),
+                            ),
+                          ),
                         ),
                       ],
-                    ),
+                    )
                   ],
                 ),
               ),
