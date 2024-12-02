@@ -3,12 +3,14 @@ class PokemonMove {
   final MoveLearnMethod moveLearnMethod;
   final Move move;
 
-  PokemonMove({required this.level, required this.moveLearnMethod, required this.move});
+  PokemonMove(
+      {required this.level, required this.moveLearnMethod, required this.move});
 
   factory PokemonMove.fromJson(Map<String, dynamic> json) {
     return PokemonMove(
       level: json['level'],
-      moveLearnMethod: MoveLearnMethod.fromJson(json['pokemon_v2_movelearnmethod']),
+      moveLearnMethod:
+          MoveLearnMethod.fromJson(json['pokemon_v2_movelearnmethod']),
       move: Move.fromJson(json['pokemon_v2_move']),
     );
   }
@@ -58,6 +60,7 @@ class Move {
   final int pp;
   final MoveDamageClass moveDamageClass;
   final MoveType moveType;
+  final MoveFlavor flavorText;
 
   Move({
     required this.id,
@@ -67,6 +70,7 @@ class Move {
     required this.pp,
     required this.moveDamageClass,
     required this.moveType,
+    required this.flavorText,
   });
 
   factory Move.fromJson(Map<String, dynamic> json) {
@@ -76,8 +80,12 @@ class Move {
       power: json['power'],
       accuracy: json['accuracy'],
       pp: json['pp'],
-      moveDamageClass: MoveDamageClass.fromJson(json['pokemon_v2_movedamageclass']),
+      moveDamageClass:
+          MoveDamageClass.fromJson(json['pokemon_v2_movedamageclass']),
       moveType: MoveType.fromJson(json['pokemon_v2_type']),
+      flavorText: (json['pokemon_v2_moveflavortexts'] as List).isNotEmpty
+          ? MoveFlavor.fromJson(json['pokemon_v2_moveflavortexts'][0])
+          : MoveFlavor(flavorText: 'No description was found for this move'),
     );
   }
 
@@ -142,5 +150,28 @@ class MoveType {
   @override
   String toString() {
     return 'MoveType(name: $name)';
+  }
+}
+
+class MoveFlavor {
+  final String flavorText;
+
+  MoveFlavor({required this.flavorText});
+
+  factory MoveFlavor.fromJson(Map<String, dynamic> json) {
+    return MoveFlavor(
+      flavorText: json['flavor_text'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'flavor_text': flavorText,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'MoveFlavor(flavorText: $flavorText)';
   }
 }

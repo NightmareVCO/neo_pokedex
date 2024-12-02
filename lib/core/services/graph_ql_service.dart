@@ -184,10 +184,11 @@ class GraphQLService {
     return data.map((json) => PokemonStats.fromJson(json)).toList();
   }
 
-  Future<List<PokemonMove>> fetchPokemonMoves(int pokemonId) async {
+  Future<List<PokemonMove>> fetchPokemonMoves(int pokemonId,
+      {int amountOfMoves = 1000}) async {
     const String query = '''
-      query MyQuery(\$pokemonId: Int!) {
-        pokemon_v2_pokemonmove(where: {pokemon_id: {_eq: \$pokemonId}}, order_by: {level: asc}) {
+      query MyQuery(\$pokemonId: Int!, \$limit: Int) {
+        pokemon_v2_pokemonmove(where: {pokemon_id: {_eq: \$pokemonId}}, limit: \$limit, order_by: {level: asc}) {
           level
           pokemon_v2_movelearnmethod {
             name
@@ -204,6 +205,9 @@ class GraphQLService {
             pokemon_v2_type {
               name
             }
+            pokemon_v2_moveflavortexts(where: {language_id: {_eq: 9}}, limit: 1) {
+              flavor_text
+            }
           }
         }
       }
@@ -211,7 +215,7 @@ class GraphQLService {
 
     final QueryOptions options = QueryOptions(
       document: gql(query),
-      variables: {'pokemonId': pokemonId},
+      variables: {'pokemonId': pokemonId, 'limit': amountOfMoves},
     );
 
     final QueryResult result = await client.query(options);
@@ -221,7 +225,13 @@ class GraphQLService {
     }
 
     final List<dynamic> data = result.data!['pokemon_v2_pokemonmove'];
-    return data.map((json) => PokemonMove.fromJson(json)).toList();
+    final List<PokemonMove> moves =
+        data.map((json) => PokemonMove.fromJson(json)).toList();
+
+    final uniqueMoves = moves.toSet().toList();
+    final uniqueMovesByName =
+        {for (var move in uniqueMoves) move.move.name: move}.values.toList();
+    return uniqueMovesByName;
   }
 
   Future<List<EggGroup>> getEggGroups(int pokemonSpeciesId) async {

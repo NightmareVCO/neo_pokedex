@@ -25,6 +25,7 @@ class PokemonMoveTextDto {
   final String moveType;
   final String moveDamageClass;
   final String movePP;
+  final String moveFlavorText;
 
   PokemonMoveTextDto(
       {required this.level,
@@ -34,7 +35,8 @@ class PokemonMoveTextDto {
       required this.moveAccuracy,
       required this.moveType,
       required this.moveDamageClass,
-      required this.movePP});
+      required this.movePP,
+      required this.moveFlavorText});
 
   static PokemonMoveTextDto fromJson(Map<String, dynamic> json) {
     return PokemonMoveTextDto(
@@ -46,6 +48,7 @@ class PokemonMoveTextDto {
       moveType: json['moveType'],
       moveDamageClass: json['moveDamageClass'],
       movePP: json['movePP'],
+      moveFlavorText: json['moveFlavorText'],
     );
   }
 
@@ -59,6 +62,7 @@ class PokemonMoveTextDto {
       moveType: move.move.moveType.name,
       moveDamageClass: move.move.moveDamageClass.name,
       movePP: move.move.pp.toString(),
+      moveFlavorText: move.move.flavorText.flavorText,
     );
   }
 }
