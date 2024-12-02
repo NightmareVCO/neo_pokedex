@@ -4,6 +4,8 @@ import 'package:neo_pokedex/core/services/graph_ql_service.dart';
 import 'package:neo_pokedex/core/models/pokemon.dart' as models;
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list_app_bar.dart';
+import 'package:neo_pokedex/ui/shared/components/favorites_notifier.dart'; // Import the global notifier
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 class PokemonListPage extends StatefulWidget {
   static const String routeName = '/';
@@ -26,11 +28,19 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   String _orderBy = "";
   String _sort = "desc";
-  String _type = "";
+  final List<String> _types = [];
+  // final List<String> _generations = [];
 
   @override
   void initState() {
     super.initState();
+    _initializeFavorites(); // Initialize favorites when the home page is first built
+  }
+
+  Future<void> _initializeFavorites() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> favorites = prefs.getStringList('favorites') ?? [];
+    favoritesNotifier.value = favorites;
   }
 
   @override
@@ -55,7 +65,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
         _sort,
         _limit,
         _offset,
-        _type,
+        _types.isEmpty ? "" : _types.first,
       );
       setState(() {
         _pokemons.addAll(fetchedPokemons);
@@ -104,7 +114,12 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   void _updateType(String newType) {
     setState(() {
-      _type = newType;
+      if (_types.contains(newType)) {
+        _types.remove(newType);
+      } else {
+        _types.add(newType);
+      }
+
       _offset = 0;
       _pokemons.clear();
       _hasMore = true;
@@ -123,23 +138,31 @@ class _PokemonListPageState extends State<PokemonListPage> {
             orderBy: _orderBy,
             limit: _limit,
             sort: _sort,
-            type: _type,
+            types: _types,
             onOrderByChanged: _updateOrderBy,
             onLimitChanged: _updateLimit,
             onSortChanged: _updateSort,
             onTypeChanged: _updateType,
           ),
-          body: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (!_isLoading &&
-                  _hasMore &&
-                  scrollInfo.metrics.pixels ==
-                      scrollInfo.metrics.maxScrollExtent) {
-                _fetchPokemons();
-              }
-              return false;
+          body: ValueListenableBuilder<List<String>>(
+            valueListenable: favoritesNotifier,
+            builder: (context, favorites, _) {
+              return NotificationListener<ScrollNotification>(
+                onNotification: (ScrollNotification scrollInfo) {
+                  if (!_isLoading &&
+                      _hasMore &&
+                      scrollInfo.metrics.pixels ==
+                          scrollInfo.metrics.maxScrollExtent) {
+                    _fetchPokemons();
+                  }
+                  return false;
+                },
+                child: PokemonList(
+                  pokemons: _pokemons,
+                  favorites: favorites, // Pass favorites to the list
+                ),
+              );
             },
-            child: PokemonList(pokemons: _pokemons),
           ),
         ),
         if (_isLoading)

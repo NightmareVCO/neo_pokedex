@@ -128,6 +128,7 @@ class _PokemonPageState extends State<PokemonPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PokemonAppBar(
+        pokemonId: id.toString(),
         scrollOffsetNotifier: _scrollOffset,
         type: 'unknown',
         imageUrl: '',
@@ -142,6 +143,7 @@ class _PokemonPageState extends State<PokemonPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PokemonAppBar(
+        pokemonId: id.toString(),
         scrollOffsetNotifier: _scrollOffset,
         type: 'unknown',
         imageUrl: '',
@@ -159,6 +161,7 @@ class _PokemonPageState extends State<PokemonPage> {
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PokemonAppBar(
+        pokemonId: id.toString(),
         scrollOffsetNotifier: _scrollOffset,
         type: pokemonDto.pokemonEvolutionTabInfoDto.type,
         imageUrl: pokemon.imageUrl,

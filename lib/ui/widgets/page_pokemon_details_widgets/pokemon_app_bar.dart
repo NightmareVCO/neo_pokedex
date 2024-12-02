@@ -8,6 +8,7 @@ class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String imageUrl;
   final String type;
   final String name;
+  final String pokemonId;
 
   const PokemonAppBar({
     super.key,
@@ -15,6 +16,7 @@ class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.imageUrl,
     required this.type,
     required this.name,
+    required this.pokemonId,
   });
 
   @override
@@ -79,6 +81,7 @@ class _PokemonAppBarState extends State<PokemonAppBar> {
                   color: scrollOffset > 200 ? Colors.black : Colors.white,
                 ),
                 HeartIconButton(
+                  pokemonRef: widget.pokemonId,
                   color: scrollOffset > 200 ? Colors.black : Colors.white,
                 ),
               ],
