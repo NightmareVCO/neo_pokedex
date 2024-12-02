@@ -29,7 +29,7 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Neo Pokedex',
         routes: routes,
-        initialRoute: PokemonListPage.routeName,
+        //initialRoute: PokemonListPage.routeName,
       ),
     );
   }

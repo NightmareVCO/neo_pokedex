@@ -429,65 +429,80 @@ class GraphQLService {
 
 // FILTRADO
 
-  Future<List<Pokemon>> getPokemons(
-      List<Map<String, String>> orderBy, String orderByDirecction, int limit, int offset,
-      [String? search, List<String>? types, String? generation, List<int>? ids]) async {
-    String query = '''
-      query MyQuery(\$where: pokemon_v2_pokemon_bool_exp, \$limit: Int, \$offset: Int, \$order: [pokemon_v2_pokemon_order_by!]) {
-        pokemon_v2_pokemon(
-          limit: \$limit,
-          offset: \$offset,
-          order_by: \$order
-          where: \$where
-        ) {
-          id
-          name
-          pokemon_v2_pokemonspecy{
-            pokemon_v2_generation{
-              name
-            }
+Future<List<Pokemon>> getPokemons(
+    List<Map<String, String>> orderBy, int limit, int offset,
+    [String? search, List<String>? types, String? generation,String? moves, List<int>? ids]) async {
+  String query = '''
+    query MyQuery(\$where: pokemon_v2_pokemon_bool_exp, \$limit: Int, \$offset: Int, \$order: [pokemon_v2_pokemon_order_by!]) {
+      pokemon_v2_pokemon(
+        limit: \$limit,
+        offset: \$offset,
+        order_by: \$order,
+        where: \$where
+      ) {
+        id
+        name
+        pokemon_v2_pokemonspecy {
+          pokemon_v2_generation {
+            name
           }
-          pokemon_v2_pokemontypes {
-            pokemon_v2_type {
-              name
-            }
+        }
+        pokemon_v2_pokemontypes {
+          pokemon_v2_type {
+            name
           }
-          pokemon_v2_pokemonsprites {
-            sprites(path: "other.official-artwork.front_default")
+        }
+        pokemon_v2_pokemonsprites {
+          sprites(path: "other.official-artwork.front_default")
+        }
+         pokemon_v2_pokemonmoves {
+          pokemon_v2_move {
+            name
           }
         }
       }
-    ''';
-    // si el filtro esta vacio se debe retornar todos los pokemones
-    final where = <String, dynamic>{};
+    }
+  ''';
 
-     if (search != null && search.isNotEmpty) {
+  // si el filtro esta vacio se debe retornar todos los pokemones
+  final where = <String, dynamic>{};
+
+  if (search != null && search.isNotEmpty) {
+    final int? searchId = int.tryParse(search);
     where['_or'] = [
       {'name': {'_ilike': '%$search%'}},
-      {'id': {'_ilike': '%$search%'}}
+      if (searchId != null) {'id': {'_eq': searchId}} // Cambiar _ilike a _eq para id
     ];
   }
 
-    if (types != null && types.isNotEmpty) {
-      where['pokemon_v2_pokemontypes'] = {
-        'pokemon_v2_type': {
-          'name': {'_in': types}
-        }
-      };
-    }
-    if(generation != null && generation.isNotEmpty){
-      where['pokemon_v2_pokemonspecy'] = {
-        'pokemon_v2_generation': {
-          'name': {'_eq': generation}
-        }
-      };
-    }
+  if (types != null && types.isNotEmpty) {
+    where['pokemon_v2_pokemontypes'] = {
+      'pokemon_v2_type': {
+        'name': {'_in': types}
+      }
+    };
+  }
 
-    if(ids != null && ids.isNotEmpty){
-      where['id'] = {'_in': ids};
-    }
+  if (generation != null && generation.isNotEmpty) {
+    where['pokemon_v2_pokemonspecy'] = {
+      'pokemon_v2_generation': {
+        'name': {'_eq': generation}
+      }
+    };
+  }
 
-    final order = <Map<String, dynamic>>[];
+  // Si la lista de ids esta vacia, que se devuelvan todos los pokemones
+  if (ids != null && ids.isNotEmpty) {
+    where['id'] = {'_in': ids};
+  }
+  if (moves != null && moves.isNotEmpty) {
+    where['pokemon_v2_pokemonmoves'] = {
+      'pokemon_v2_move': {
+        'name': {'_eq': moves}
+      }
+    };
+  }
+  final order = <Map<String, dynamic>>[];
   for (var criterion in orderBy) {
     var field = criterion.keys.first;
     var direction = criterion.values.first;
@@ -497,62 +512,75 @@ class GraphQLService {
     order.add({field: direction});
   }
 
-    final QueryOptions options = QueryOptions(
-      document: gql(query),
-      variables: {
-        'where': where,
-        'limit': limit,
-        'offset': offset,
-        'order': order,
-      },
-    );
+  print('Query: $query');
+  print('Variables: ${{
+    'where': where,
+    'limit': limit,
+    'offset': offset,
+    'order': order,
+  }}}');
 
-    final QueryResult result = await client.query(options);
+  final QueryOptions options = QueryOptions(
+    document: gql(query),
+    variables: {
+      'where': where,
+      'limit': limit,
+      'offset': offset,
+      'order': order,
+    },
+  );
 
-    if (result.hasException) {
-      throw Exception(result.exception.toString());
-    }
+  final QueryResult result = await client.query(options);
 
-    final List<dynamic> data = result.data!['pokemon_v2_pokemon'];
-
-    return data.map((json) => Pokemon.fromJson(json)).toList();
+  if (result.hasException) {
+    print('GraphQL Exception: ${result.exception.toString()}');
+    throw Exception(result.exception.toString());
   }
 
-//   Future<List<Pokemon>> getPokemonsByIds(List<int> ids) async {
-//   String query = '''
-//     query MyQuery(\$ids: [Int!]) {
-//       pokemon_v2_pokemon(where: {id: {_in: \$ids}}) {
-//         id
-//         name
-//         pokemon_v2_pokemontypes {
-//           pokemon_v2_type {
-//             name
-//           }
-//         }
-//         pokemon_v2_pokemonsprites {
-//           sprites(path: "other.official-artwork.front_default")
-//         }
-//       }
-//     }
-//   ''';
+  if (result.data == null) {
+    print('No data received from GraphQL query.');
+    return [];
+  }
 
-//   final variables = {
-//     'ids': ids,
-//   };
+  print('Full result data: ${result.data}');
 
-//   final QueryOptions options = QueryOptions(
-//     document: gql(query),
-//     variables: variables,
-//   );
+  final List<dynamic> data = result.data!['pokemon_v2_pokemon'];
 
-//   final QueryResult result = await client.query(options);
+  if (data.isEmpty) {
+    print('No Pokémon found.');
+    return [];
+  }
 
-//   if (result.hasException) {
-//     throw Exception(result.exception.toString());
-//   }
+  print('Pokémon data received: ${data.length} entries.');
+  print('Pokémon data: $data');
 
-//   final List<dynamic> data = result.data!['pokemon_v2_pokemon'];
+  return data.map((json) => Pokemon.fromJson(json)).toList();
+}
+Future<List<PokemonMove>> fetchAllMovesPokemons({int limit = 10, int offset = 10}) async {
+  const String query = '''
+    query GetAllMoves(\$limit: Int, \$offset: Int) {
+      pokemon_v2_move(limit: \$limit, offset: \$offset) {
+        id
+        name
+      }
+    }
+  ''';
 
-//   return data.map((json) => Pokemon.fromJson(json)).toList();
-// }
+  final QueryOptions options = QueryOptions(
+    document: gql(query),
+    variables: {
+      'limit': limit,
+      'offset': offset,
+    },
+  );
+
+  final QueryResult result = await client.query(options);
+
+  if (result.hasException) {
+    throw Exception(result.exception.toString());
+  }
+
+  final List<dynamic> data = result.data!['pokemon_v2_move'];
+  return data.map((json) => PokemonMove.fromJson(json)).toList();
+}
 }

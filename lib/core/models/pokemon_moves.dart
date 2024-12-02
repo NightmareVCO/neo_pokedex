@@ -51,6 +51,7 @@ class MoveLearnMethod {
 }
 
 class Move {
+  final int id;
   final String name;
   final int? power;
   final int? accuracy;
@@ -59,6 +60,7 @@ class Move {
   final MoveType moveType;
 
   Move({
+    required this.id,
     required this.name,
     this.power,
     this.accuracy,
@@ -69,6 +71,7 @@ class Move {
 
   factory Move.fromJson(Map<String, dynamic> json) {
     return Move(
+      id: json['id'],
       name: json['name'],
       power: json['power'],
       accuracy: json['accuracy'],
@@ -80,6 +83,7 @@ class Move {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'power': power,
       'accuracy': accuracy,
@@ -91,7 +95,7 @@ class Move {
 
   @override
   String toString() {
-    return 'Move(name: $name, power: $power, accuracy: $accuracy, pp: $pp, moveDamageClass: $moveDamageClass, moveType: $moveType)';
+    return 'Move(id: $id,name: $name, power: $power, accuracy: $accuracy, pp: $pp, moveDamageClass: $moveDamageClass, moveType: $moveType)';
   }
 }
 
