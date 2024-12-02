@@ -431,7 +431,7 @@ class GraphQLService {
 
   Future<List<Pokemon>> getPokemons(
       List<Map<String, String>> orderBy, String orderByDirecction, int limit, int offset,
-      [String? search, List<String>? types, String? generation]) async {
+      [String? search, List<String>? types, String? generation, List<int>? ids]) async {
     String query = '''
       query MyQuery(\$where: pokemon_v2_pokemon_bool_exp, \$limit: Int, \$offset: Int, \$order: [pokemon_v2_pokemon_order_by!]) {
         pokemon_v2_pokemon(
@@ -483,6 +483,10 @@ class GraphQLService {
       };
     }
 
+    if(ids != null && ids.isNotEmpty){
+      where['id'] = {'_in': ids};
+    }
+
     final order = <Map<String, dynamic>>[];
   for (var criterion in orderBy) {
     var field = criterion.keys.first;
@@ -514,41 +518,41 @@ class GraphQLService {
     return data.map((json) => Pokemon.fromJson(json)).toList();
   }
 
-  Future<List<Pokemon>> getPokemonsByIds(List<int> ids) async {
-  String query = '''
-    query MyQuery(\$ids: [Int!]) {
-      pokemon_v2_pokemon(where: {id: {_in: \$ids}}) {
-        id
-        name
-        pokemon_v2_pokemontypes {
-          pokemon_v2_type {
-            name
-          }
-        }
-        pokemon_v2_pokemonsprites {
-          sprites(path: "other.official-artwork.front_default")
-        }
-      }
-    }
-  ''';
+//   Future<List<Pokemon>> getPokemonsByIds(List<int> ids) async {
+//   String query = '''
+//     query MyQuery(\$ids: [Int!]) {
+//       pokemon_v2_pokemon(where: {id: {_in: \$ids}}) {
+//         id
+//         name
+//         pokemon_v2_pokemontypes {
+//           pokemon_v2_type {
+//             name
+//           }
+//         }
+//         pokemon_v2_pokemonsprites {
+//           sprites(path: "other.official-artwork.front_default")
+//         }
+//       }
+//     }
+//   ''';
 
-  final variables = {
-    'ids': ids,
-  };
+//   final variables = {
+//     'ids': ids,
+//   };
 
-  final QueryOptions options = QueryOptions(
-    document: gql(query),
-    variables: variables,
-  );
+//   final QueryOptions options = QueryOptions(
+//     document: gql(query),
+//     variables: variables,
+//   );
 
-  final QueryResult result = await client.query(options);
+//   final QueryResult result = await client.query(options);
 
-  if (result.hasException) {
-    throw Exception(result.exception.toString());
-  }
+//   if (result.hasException) {
+//     throw Exception(result.exception.toString());
+//   }
 
-  final List<dynamic> data = result.data!['pokemon_v2_pokemon'];
+//   final List<dynamic> data = result.data!['pokemon_v2_pokemon'];
 
-  return data.map((json) => Pokemon.fromJson(json)).toList();
-}
+//   return data.map((json) => Pokemon.fromJson(json)).toList();
+// }
 }
