@@ -499,8 +499,7 @@ class GraphQLService {
         if (searchId != null)
           {
             'id': {
-              '_regex':
-                  '^$searchId\\d+' // Coincidir con searchId seguido de al menos un dígito
+              '_in': [searchId, searchId * 10, searchId * 100, searchId * 1000]
             }
           }
       ];

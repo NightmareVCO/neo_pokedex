@@ -28,3 +28,35 @@ String toTitleCaseWithSpaces(String str) {
 String removeNewLines(String str) {
   return str.replaceAll('\n', ' ').replaceAll('\f', ' ');
 }
+
+//recibe un numero y lo devuelve en romano (del 1 al 10)
+String toRoman(int number) {
+  if (number < 1 || number > 10) {
+    throw ArgumentError('Number must be between 1 and 10');
+  }
+
+  switch (number) {
+    case 1:
+      return 'i';
+    case 2:
+      return 'ii';
+    case 3:
+      return 'iii';
+    case 4:
+      return 'iv';
+    case 5:
+      return 'v';
+    case 6:
+      return 'vi';
+    case 7:
+      return 'vii';
+    case 8:
+      return 'viii';
+    case 9:
+      return 'iv';
+    case 10:
+      return 'x';
+    default:
+      return '';
+  }
+}

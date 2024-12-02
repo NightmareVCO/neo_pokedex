@@ -120,6 +120,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: TextField(
+                    cursorColor: pokemonTypeColors['dragon'],
                     decoration: const InputDecoration(
                       hintText: 'Search Pokémon',
                       border: InputBorder.none,
@@ -188,10 +189,10 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
       IconData sortIcon = Icons.sort;
 
       for (var order in widget.orderBy) {
-        if (order['value'] == 'name') {
+        if (order['name'] == 'asc' || order['name'] == 'desc') {
           sortLabel = 'Name';
           sortIcon = Icons.sort_by_alpha;
-        } else if (order['value'] == 'id') {
+        } else if (order['id'] == 'asc' || order['id'] == 'desc') {
           sortLabel = 'ID';
           sortIcon = Icons.format_list_numbered;
         }
@@ -230,7 +231,7 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           side: const BorderSide(
             color: Colors.transparent,
           ),
-          label: Text('Gen ${widget.generation.substring(4)}',
+          label: Text('Gen. ${widget.generation.substring(11).toUpperCase()}',
               style: const TextStyle(color: Colors.white)),
           backgroundColor: Colors.blue,
           deleteIconColor: Colors.white,
@@ -348,8 +349,9 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                           ListView(
                             children: List.generate(9, (index) {
                               final generation = index + 1;
-                              bool isSelected =
-                                  selectedGeneration == 'gen_$generation';
+                              final romanGeneration = toRoman(generation);
+                              bool isSelected = selectedGeneration ==
+                                  'generation-$romanGeneration';
                               return ListTile(
                                 title: Text('Generation $generation'),
                                 trailing: isSelected
@@ -358,8 +360,9 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
                                     : null,
                                 onTap: () {
                                   setState(() {
-                                    selectedGeneration =
-                                        isSelected ? null : 'gen_$generation';
+                                    selectedGeneration = isSelected
+                                        ? null
+                                        : 'generation-$romanGeneration';
                                   });
                                 },
                               );
@@ -440,33 +443,124 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
   }
 
   void _showSortOptions() async {
+    bool isAscending = true; // Add state for sort order
+    String? currentSortOption; // Add state for current sort option
+
+    // Determine the current sort option and order
+    if (widget.orderBy.isNotEmpty) {
+      var firstOrder = widget.orderBy.first;
+      currentSortOption = firstOrder.keys.first;
+      isAscending = firstOrder[currentSortOption] == 'asc';
+    }
+
     final String? selectedOption = await showModalBottomSheet<String>(
       context: context,
       builder: (BuildContext context) {
-        return ListView(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.sort_by_alpha),
-              title: const Text('name'),
-              onTap: () {
-                Navigator.pop(context, 'name');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.format_list_numbered),
-              title: const Text('id'),
-              onTap: () {
-                Navigator.pop(context, 'id');
-              },
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0), // Opcional: Añade padding
+                child: Column(
+                  mainAxisSize:
+                      MainAxisSize.max, // Ajusta el tamaño al contenido
+                  children: [
+                    const ListTile(
+                      title: Text(
+                        'Sort by',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    // Add check marks to sort options
+                    ListTile(
+                      leading: const Icon(Icons.sort_by_alpha),
+                      title: const Text('Name'),
+                      trailing: currentSortOption == 'name'
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: () {
+                        setState(() {
+                          currentSortOption = 'name';
+                        });
+                        Navigator.pop(context, 'name');
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.format_list_numbered),
+                      title: const Text('ID'),
+                      trailing: currentSortOption == 'id'
+                          ? const Icon(Icons.check, color: Colors.green)
+                          : null,
+                      onTap: () {
+                        setState(() {
+                          currentSortOption = 'id';
+                        });
+                        Navigator.pop(context, 'id');
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isAscending = true;
+                              // also update the sort order
+                              widget.onOrderByChanged([
+                                {currentSortOption!: 'asc'}
+                              ]);
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isAscending
+                                ? pokemonTypeColors['dragon']
+                                : Colors.white,
+                          ),
+                          child: Text('Ascending',
+                              style: TextStyle(
+                                  color: isAscending
+                                      ? Colors.white
+                                      : pokemonTypeColors['dragon'])),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isAscending = false;
+                              // also update the sort order
+                              widget.onOrderByChanged([
+                                {currentSortOption!: 'desc'}
+                              ]);
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: !isAscending
+                                ? pokemonTypeColors['dragon']
+                                : Colors.white,
+                          ),
+                          child: Text('Descending',
+                              style: TextStyle(
+                                  color: !isAscending
+                                      ? Colors.white
+                                      : pokemonTypeColors['dragon'])),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
 
     if (selectedOption != null) {
       widget.onOrderByChanged([
-        {selectedOption: 'asc'}
+        {selectedOption: isAscending ? 'asc' : 'desc'}
       ]);
     }
   }
