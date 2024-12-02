@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/ui/shared/components/heart_button.dart';
 import 'package:neo_pokedex/ui/shared/components/home_button.dart';
+import 'package:neo_pokedex/ui/shared/components/share_button.dart';
 import 'package:neo_pokedex/ui/themes/pokemon_type_colors_bg.dart';
+import 'package:screenshot/screenshot.dart';
 
 class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ValueNotifier<double> scrollOffsetNotifier;
@@ -9,6 +11,7 @@ class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String type;
   final String name;
   final String pokemonId;
+  final ScreenshotController screenshotController; // Added ScreenshotController
 
   const PokemonAppBar({
     super.key,
@@ -17,6 +20,7 @@ class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.type,
     required this.name,
     required this.pokemonId,
+    required this.screenshotController, // Added to constructor
   });
 
   @override
@@ -83,6 +87,11 @@ class _PokemonAppBarState extends State<PokemonAppBar> {
                 HeartIconButton(
                   pokemonRef: widget.pokemonId,
                   color: scrollOffset > 200 ? Colors.black : Colors.white,
+                ),
+                ShareIconButton(
+                  color: scrollOffset > 200 ? Colors.black : Colors.white,
+                  screenshotController:
+                      widget.screenshotController, // Passed controller
                 ),
               ],
             );

@@ -14,6 +14,7 @@ import 'package:neo_pokedex/core/models/dto/pokemon_about_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_moves_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_stats_tab_info_dto.dart';
+import 'package:screenshot/screenshot.dart';
 
 class PokemonPage extends StatefulWidget {
   static const String routeName = '/pokemon_page';
@@ -26,6 +27,7 @@ class PokemonPage extends StatefulWidget {
 }
 
 class _PokemonPageState extends State<PokemonPage> {
+  final ScreenshotController _screenshotController = ScreenshotController();
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0.0);
   final double maxScrollOffset = 320.0;
@@ -69,6 +71,7 @@ class _PokemonPageState extends State<PokemonPage> {
   }
 
   Future<Map<String, dynamic>> fetchAllPokemonData(int id) async {
+    final ScreenshotController _screenshotController = ScreenshotController();
     final pokemon = await _graphQLService.getPokemonById(id);
     final type = await _graphQLService.getPokemonTypeById(id);
     final stats = await _graphQLService.getPokemonStatsById(id);
@@ -133,6 +136,7 @@ class _PokemonPageState extends State<PokemonPage> {
         type: 'unknown',
         imageUrl: '',
         name: '',
+        screenshotController: _screenshotController,
       ),
       body: const Center(child: CircularProgressIndicator()),
     );
@@ -148,6 +152,7 @@ class _PokemonPageState extends State<PokemonPage> {
         type: 'unknown',
         imageUrl: '',
         name: '',
+        screenshotController: _screenshotController,
       ),
       body: Center(child: Text('Error: $error')),
     );
@@ -166,25 +171,33 @@ class _PokemonPageState extends State<PokemonPage> {
         type: pokemonDto.pokemonEvolutionTabInfoDto.type,
         imageUrl: pokemon.imageUrl,
         name: toTitleCaseWithSpaces(pokemon.name),
+        screenshotController: _screenshotController,
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Stack(
-          children: [
-            CircleBackGround(types: pokemon.types),
-            const Positioned(
-              top: 100,
-              right: -100,
-              child: PokeballBackground(color: PokeballBackgroundColors.white),
+      body: Screenshot(
+        controller: _screenshotController,
+        child: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Stack(
+              children: [
+                CircleBackGround(types: pokemon.types),
+                const Positioned(
+                  top: 100,
+                  right: -100,
+                  child:
+                      PokeballBackground(color: PokeballBackgroundColors.white),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
+                  child: Pokemon(
+                    pokemonHero: pokemon,
+                    pokemonDto: pokemonDto,
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 110),
-              child: Pokemon(
-                pokemonHero: pokemon,
-                pokemonDto: pokemonDto,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
