@@ -28,13 +28,15 @@ class _PokemonListPageState extends State<PokemonListPage> {
 
   String _orderBy = "";
   String _sort = "desc";
+  String _generation = "";
+  String _powerRange = "";
   final List<String> _types = [];
   // final List<String> _generations = [];
 
   @override
   void initState() {
     super.initState();
-    _initializeFavorites(); // Initialize favorites when the home page is first built
+    _initializeFavorites();
   }
 
   Future<void> _initializeFavorites() async {
@@ -127,6 +129,26 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _fetchPokemons();
   }
 
+  void updateGeneration(String newGeneration) {
+    setState(() {
+      _generation = newGeneration;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
+  void updatePowerRange(String newPowerRange) {
+    setState(() {
+      _powerRange = newPowerRange;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -139,10 +161,14 @@ class _PokemonListPageState extends State<PokemonListPage> {
             limit: _limit,
             sort: _sort,
             types: _types,
+            generation: _generation,
+            powerRange: _powerRange,
             onOrderByChanged: _updateOrderBy,
             onLimitChanged: _updateLimit,
             onSortChanged: _updateSort,
             onTypeChanged: _updateType,
+            onGenerationChanged: updateGeneration,
+            onPowerRangeChanged: updatePowerRange,
           ),
           body: ValueListenableBuilder<List<String>>(
             valueListenable: favoritesNotifier,

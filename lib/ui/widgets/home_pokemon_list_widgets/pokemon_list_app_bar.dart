@@ -10,7 +10,11 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
   final int limit;
   final String sort;
   final List<String> types;
+  final String generation;
+  final String powerRange;
   final ValueChanged<String> onOrderByChanged;
+  final ValueChanged<String> onGenerationChanged;
+  final ValueChanged<String> onPowerRangeChanged;
   final ValueChanged<int> onLimitChanged;
   final ValueChanged<String> onSortChanged;
   final ValueChanged<String> onTypeChanged;
@@ -21,7 +25,11 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.limit,
     required this.sort,
     required this.types,
+    required this.generation,
+    required this.powerRange,
     required this.onOrderByChanged,
+    required this.onGenerationChanged,
+    required this.onPowerRangeChanged,
     required this.onLimitChanged,
     required this.onSortChanged,
     required this.onTypeChanged,
@@ -32,7 +40,12 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-        (types.isNotEmpty || orderBy.isNotEmpty) ? 185.0 : 115.0,
+        (types.isNotEmpty ||
+                orderBy.isNotEmpty ||
+                generation.isNotEmpty ||
+                powerRange.isNotEmpty)
+            ? 185.0
+            : 115.0,
       );
 }
 
@@ -177,6 +190,52 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
           },
         ),
       );
+      chips.add(const SizedBox(width: 8));
+    }
+
+    // add a chip for generation
+    if (widget.generation.isNotEmpty) {
+      chips.add(
+        Chip(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          side: const BorderSide(
+            color: Colors.transparent,
+          ),
+          label: Text('Gen ${widget.generation.substring(4)}',
+              style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.blue,
+          deleteIconColor: Colors.white,
+          onDeleted: () {
+            widget.onGenerationChanged('');
+          },
+        ),
+      );
+      chips.add(const SizedBox(width: 8));
+    }
+
+    // add a chip for power range
+    if (widget.powerRange.isNotEmpty) {
+      final List<String> range = widget.powerRange.split('_');
+      chips.add(
+        Chip(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          side: const BorderSide(
+            color: Colors.transparent,
+          ),
+          label: Text('Power (${range[1]} - ${range[2]})',
+              style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.green,
+          deleteIconColor: Colors.white,
+          onDeleted: () {
+            widget.onPowerRangeChanged('');
+          },
+        ),
+      );
+      chips.add(const SizedBox(width: 8));
     }
 
     return chips;
@@ -184,8 +243,10 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
 
   void _showFilterOptions() async {
     List<String> selectedTypes = List.from(widget.types);
-    String? selectedGeneration;
-    String? selectedPowerRange;
+    String? selectedGeneration =
+        widget.generation.isNotEmpty ? widget.generation : null;
+    String? selectedPowerRange =
+        widget.powerRange.isNotEmpty ? widget.powerRange : null;
 
     final bool? apply = await showModalBottomSheet<bool>(
       context: context,
@@ -339,15 +400,15 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
         widget.onTypeChanged(type);
       }
 
-      // if (selectedGeneration != null &&
-      //     selectedGeneration != widget.generation) {
-      //   widget.onGenerationChanged(selectedGeneration!);
-      // }
+      if (selectedGeneration != null &&
+          selectedGeneration != widget.generation) {
+        widget.onGenerationChanged(selectedGeneration!);
+      }
 
-      // if (selectedPowerRange != null &&
-      //     selectedPowerRange != widget.powerRange) {
-      //   widget.onPowerRangeChanged(selectedPowerRange!);
-      // }
+      if (selectedPowerRange != null &&
+          selectedPowerRange != widget.powerRange) {
+        widget.onPowerRangeChanged(selectedPowerRange!);
+      }
     }
   }
 
