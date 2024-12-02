@@ -11,7 +11,7 @@ class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String type;
   final String name;
   final String pokemonId;
-  final ScreenshotController screenshotController; // Added ScreenshotController
+  final ScreenshotController screenshotController;
 
   const PokemonAppBar({
     super.key,
@@ -20,7 +20,7 @@ class PokemonAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.type,
     required this.name,
     required this.pokemonId,
-    required this.screenshotController, // Added to constructor
+    required this.screenshotController,
   });
 
   @override
@@ -69,7 +69,9 @@ class _PokemonAppBarState extends State<PokemonAppBar> {
                       ),
                     const SizedBox(width: 10),
                     Text(
-                      widget.name,
+                      widget.name.length > 7
+                          ? '${widget.name.substring(0, 7)}...'
+                          : widget.name,
                       style: TextStyle(
                         color: scrollOffset > 200
                             ? pokemonTypeColorsBg[widget.type]
