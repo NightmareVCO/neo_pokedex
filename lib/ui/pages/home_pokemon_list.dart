@@ -27,7 +27,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
   bool _isInitialized = false;
   bool _inFavorites = false;
 
-  String _orderBy = "";
+  List<Map<String, String>> _orderBy = [];
   String _sort = "desc";
   String _generation = "";
   String _powerRange = "";
@@ -84,7 +84,7 @@ class _PokemonListPageState extends State<PokemonListPage> {
     }
   }
 
-  void _updateOrderBy(String newOrderBy) {
+  void _updateOrderBy(List<Map<String, String>> newOrderBy) {
     setState(() {
       _orderBy = newOrderBy;
       _offset = 0;
