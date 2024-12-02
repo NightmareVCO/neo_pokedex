@@ -16,6 +16,7 @@ import 'package:neo_pokedex/core/models/dto/pokemon_evolution_tab_info_dto.dart'
 import 'package:neo_pokedex/core/models/dto/pokemon_moves_tab_info_dto.dart';
 import 'package:neo_pokedex/core/models/dto/pokemon_stats_tab_info_dto.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:shimmer/shimmer.dart';
 
 class PokemonPage extends StatefulWidget {
   static const String routeName = '/pokemon_page';
@@ -128,35 +129,120 @@ class _PokemonPageState extends State<PokemonPage> {
 
   Widget _buildLoadingState() {
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.white,
-        appBar: PokemonAppBar(
-          pokemonId: id.toString(),
-          scrollOffsetNotifier: _scrollOffset,
-          type: 'unknown',
-          imageUrl: '',
-          name: '',
-          screenshotController: _screenshotController,
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: PokemonAppBar(
+        pokemonId: id.toString(),
+        scrollOffsetNotifier: _scrollOffset,
+        type: 'unknown',
+        imageUrl: '',
+        name: '',
+        screenshotController: _screenshotController,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 100.0),
+              Container(
+                width: double.infinity,
+                height: 24.0,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              Center(
+                child: Container(
+                  width: 120.0,
+                  height: 120.0,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(
+                    3,
+                    (index) => Container(
+                          width: 80.0,
+                          height: 30.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                        )),
+              ),
+              const SizedBox(height: 24.0),
+              Column(
+                children: List.generate(6,
+                    (index) => _buildCardSkeleton()), // Increased from 3 to 6
+              ),
+            ],
+          ),
         ),
-        body: Center(
-            child:
-                CircularProgressIndicator(color: pokemonTypeColors['dragon']))
-        //  Stack(
-        //   children: [
-        //     // Positioned(child: CircleBackGround(types: ['dragon'])),
-        //     // Positioned(
-        //     //   top: 170,
-        //     //   right: 65,
-        //     //   child: PokeballBackground(color: PokeballBackgroundColors.white),
-        //     // ),
-        //     Positioned(
-        //         top: 285,
-        //         right: 180,
-        //         child: CircularProgressIndicator(
-        //             color: pokemonTypeColors['dragon'])),
-        //   ],
-        // )),
-        );
+      ),
+    );
+  }
+
+  Widget _buildCardSkeleton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 120.0,
+              height: 20.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            const SizedBox(height: 12.0),
+            Container(
+              width: double.infinity,
+              height: 14.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(7.0),
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Container(
+              width: MediaQuery.of(context).size.width * 0.7,
+              height: 14.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(7.0),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildErrorState(Object error) {
