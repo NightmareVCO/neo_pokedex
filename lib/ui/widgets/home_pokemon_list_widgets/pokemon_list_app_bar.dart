@@ -12,6 +12,8 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
   final List<String> types;
   final String generation;
   final String powerRange;
+  final bool inFavorites;
+  final ValueChanged<bool> onFavoritesChanged;
   final ValueChanged<String> onOrderByChanged;
   final ValueChanged<String> onGenerationChanged;
   final ValueChanged<String> onPowerRangeChanged;
@@ -27,6 +29,8 @@ class PokemonListAppBar extends StatefulWidget implements PreferredSizeWidget {
     required this.types,
     required this.generation,
     required this.powerRange,
+    required this.inFavorites,
+    required this.onFavoritesChanged,
     required this.onOrderByChanged,
     required this.onGenerationChanged,
     required this.onPowerRangeChanged,
@@ -60,21 +64,41 @@ class _PokemonListAppBarState extends State<PokemonListAppBar> {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Neo Pokédex',
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w700,
-              color: Colors.red,
-            ),
-          ),
-          const Text(
-            'Gotta catch \'em all!',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              color: Colors.grey,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Column(
+                children: [
+                  Text(
+                    'Neo Pokédex',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.red,
+                    ),
+                  ),
+                  Text(
+                    'Gotta catch \'em all!',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              //IconButton to change favorite status
+              IconButton(
+                icon: Icon(
+                  widget.inFavorites ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.red,
+                  size: 30,
+                ),
+                onPressed: () {
+                  widget.onFavoritesChanged(!widget.inFavorites);
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           Row(

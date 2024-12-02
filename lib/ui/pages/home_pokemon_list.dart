@@ -25,13 +25,13 @@ class _PokemonListPageState extends State<PokemonListPage> {
   bool _isLoading = false;
   bool _hasMore = true;
   bool _isInitialized = false;
+  bool _inFavorites = false;
 
   String _orderBy = "";
   String _sort = "desc";
   String _generation = "";
   String _powerRange = "";
   final List<String> _types = [];
-  // final List<String> _generations = [];
 
   @override
   void initState() {
@@ -149,6 +149,16 @@ class _PokemonListPageState extends State<PokemonListPage> {
     _fetchPokemons();
   }
 
+  void _updateFavorites(bool inFavorites) {
+    setState(() {
+      _inFavorites = inFavorites;
+      _offset = 0;
+      _pokemons.clear();
+      _hasMore = true;
+    });
+    _fetchPokemons();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -163,6 +173,8 @@ class _PokemonListPageState extends State<PokemonListPage> {
             types: _types,
             generation: _generation,
             powerRange: _powerRange,
+            inFavorites: _inFavorites,
+            onFavoritesChanged: _updateFavorites,
             onOrderByChanged: _updateOrderBy,
             onLimitChanged: _updateLimit,
             onSortChanged: _updateSort,
