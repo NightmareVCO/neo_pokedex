@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:neo_pokedex/core/services/graph_ql_service.dart';
 import 'package:neo_pokedex/core/models/pokemon.dart' as models;
+import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list.dart';
 import 'package:neo_pokedex/ui/widgets/home_pokemon_list_widgets/pokemon_list_app_bar.dart';
 import 'package:neo_pokedex/ui/shared/components/favorites_notifier.dart'; // Import the global notifier
@@ -224,18 +225,20 @@ class _PokemonListPageState extends State<PokemonListPage> {
                 },
                 child: PokemonList(
                   pokemons: _pokemons,
-                  favorites: favorites, // Pass favorites to the list
+                  favorites: favorites,
                 ),
               );
             },
           ),
         ),
         if (_isLoading)
-          const Positioned(
+          Positioned(
             bottom: 10,
             left: 0,
             right: 0,
-            child: Center(child: CircularProgressIndicator()),
+            child: Center(
+                child: CircularProgressIndicator(
+                    color: pokemonTypeColors['dragon'])),
           ),
       ],
     );

@@ -6,6 +6,7 @@ import 'package:neo_pokedex/core/services/graph_ql_service.dart';
 import 'package:neo_pokedex/ui/shared/widgets/circle_background.dart';
 import 'package:neo_pokedex/ui/shared/widgets/pokeball_barkground.dart';
 import 'package:neo_pokedex/ui/themes/pokeball_background_colors.dart';
+import 'package:neo_pokedex/ui/themes/pokemon_type_colors.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon_app_bar.dart';
 import 'package:neo_pokedex/ui/widgets/page_pokemon_details_widgets/pokemon.dart';
 import 'package:neo_pokedex/utils/text_utils.dart';
@@ -137,7 +138,21 @@ class _PokemonPageState extends State<PokemonPage> {
         name: '',
         screenshotController: _screenshotController,
       ),
-      body: const Center(child: CircularProgressIndicator()),
+      body: const Center(
+          child: Stack(
+        children: [
+          Positioned(child: CircleBackGround(types: ['dragon'])),
+          Positioned(
+            top: 170,
+            right: 65,
+            child: PokeballBackground(color: PokeballBackgroundColors.white),
+          ),
+          Positioned(
+              top: 285,
+              right: 180,
+              child: CircularProgressIndicator(color: Colors.white)),
+        ],
+      )),
     );
   }
 
