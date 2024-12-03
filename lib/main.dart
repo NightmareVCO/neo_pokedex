@@ -4,8 +4,9 @@ import 'package:neo_pokedex/core/routes/routes.dart';
 import 'package:neo_pokedex/ui/pages/home_pokemon_list.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initHiveForFlutter();
 
   final client = initializeClient();
 
@@ -15,8 +16,6 @@ void main() {
     runApp(MainApp(client: client));
   });
 }
-
-//Aquí deberiamos inicializar el Provider de graphql.
 
 class MainApp extends StatelessWidget {
   final ValueNotifier<GraphQLClient> client;
@@ -42,7 +41,7 @@ ValueNotifier<GraphQLClient> initializeClient() {
 
   final ValueNotifier<GraphQLClient> client = ValueNotifier(
     GraphQLClient(
-      cache: GraphQLCache(),
+      cache: GraphQLCache(store: HiveStore()),
       link: httpLink,
     ),
   );

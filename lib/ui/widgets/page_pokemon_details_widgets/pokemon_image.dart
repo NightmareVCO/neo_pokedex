@@ -1,8 +1,11 @@
 import 'dart:io';
-
+import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:neo_pokedex/utils/audio_utils.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:neo_pokedex/utils/image_cache_manager.dart';
 
 class PokemonImage extends StatefulWidget {
   final String imageUrl;
@@ -26,6 +29,7 @@ class _PokemonImageState extends State<PokemonImage>
   late Animation<double> _animation;
 
   final AudioPlayer _audioPlayer = AudioPlayer();
+  Uint8List? _imageBytes;
 
   Future<String> getMp3(String oggUrl) async {
     if (Platform.isIOS) {
@@ -33,6 +37,20 @@ class _PokemonImageState extends State<PokemonImage>
       return url;
     }
     return "default_url";
+  }
+
+  Future<void> _loadImage() async {
+    try {
+      final bytes =
+          await ImageCacheManager.getImage(widget.imageUrl, widget.id);
+      if (bytes != null) {
+        setState(() {
+          _imageBytes = bytes;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading image: $e');
+    }
   }
 
   @override
@@ -49,6 +67,8 @@ class _PokemonImageState extends State<PokemonImage>
       parent: _controller,
       curve: Curves.bounceOut,
     );
+
+    _loadImage();
   }
 
   @override
@@ -115,30 +135,16 @@ class _PokemonImageState extends State<PokemonImage>
       onHorizontalDragEnd: _onHorizontalDragEnd,
       child: ScaleTransition(
         scale: _animation,
-        child: Image.network(
-          widget.imageUrl,
-          width: 220,
-          height: 220,
-          fit: BoxFit.cover,
-          loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent? loadingProgress) {
-            if (loadingProgress == null) {
-              return child;
-            }
-            return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        (loadingProgress.expectedTotalBytes ?? 1)
-                    : null,
+        child: _imageBytes != null
+            ? Image.memory(
+                _imageBytes!,
+                width: 220,
+                height: 220,
+                fit: BoxFit.cover,
+              )
+            : const Center(
+                child: CircularProgressIndicator(),
               ),
-            );
-          },
-          errorBuilder:
-              (BuildContext context, Object error, StackTrace? stackTrace) {
-            return const Center(child: Icon(Icons.error));
-          },
-        ),
       ),
     );
   }
